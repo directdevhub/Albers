@@ -1,15 +1,42 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Android Studio / IntelliJ
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.idea/
+
+# Keep these shared IDE settings trackable if the team adds them intentionally.
+!.idea/codeStyles/
+!.idea/codeStyles/**
+!.idea/inspectionProfiles/
+!.idea/inspectionProfiles/**
+
+# Local machine configuration
 local.properties
+*.keystore
+*.jks
+keystore.properties
+
+# Android generated files
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+generated/
+
+# Kotlin / Java
+*.kotlin_module
+out/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
