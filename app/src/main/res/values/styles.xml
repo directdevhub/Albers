@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.Albers.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:minHeight">52dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/button_primary_text</item>
+        <item name="backgroundTint">@color/button_primary_bg</item>
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+    <style name="Widget.Albers.Button.Secondary" parent="Widget.Material3.Button">
+        <item name="android:minHeight">52dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/button_secondary_text</item>
+        <item name="backgroundTint">@color/button_secondary_bg</item>
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+    <style name="Widget.Albers.Button.Danger" parent="Widget.Material3.Button">
+        <item name="android:minHeight">52dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/button_primary_text</item>
+        <item name="backgroundTint">@color/button_danger_bg</item>
+        <item name="cornerRadius">8dp</item>
+    </style>
+</resources>

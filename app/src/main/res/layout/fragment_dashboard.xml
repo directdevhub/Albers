@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_screen_primary"
     android:orientation="vertical"
     android:padding="24dp"
     tools:context=".ui.dashboard.DashboardFragment">
@@ -12,44 +13,81 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Dashboard"
+        android:textColor="@color/text_primary"
         android:textAppearance="?attr/textAppearanceHeadlineSmall" />
 
-    <TextView
-        android:id="@+id/deviceStateText"
+    <LinearLayout
+        android:id="@+id/controlPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Device state: Not connected"
-        android:textAppearance="?attr/textAppearanceBodyLarge" />
+        android:background="@drawable/bg_card_rounded"
+        android:gravity="center"
+        android:minHeight="220dp"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/deviceStateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Device state: Not connected"
+            android:textColor="@color/status_off"
+            android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+        <TextView
+            android:id="@+id/timerText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:gravity="center"
+            android:text="Automatic pump cycle not started"
+            android:textColor="@color/text_secondary"
+            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+
+        <TextView
+            android:id="@+id/pumpStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:gravity="center"
+            android:text="Pump status: Idle"
+            android:textColor="@color/status_on"
+            android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/timerText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Automatic pump cycle not started"
-        android:textAppearance="?attr/textAppearanceBodyLarge" />
-
-    <TextView
-        android:id="@+id/pumpStatusText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Pump status: Idle"
-        android:textAppearance="?attr/textAppearanceBodyLarge" />
-
-    <Button
         android:id="@+id/pumpNowButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Pump Now" />
+        android:background="@drawable/bg_button_green"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:importantForAccessibility="yes"
+        android:minHeight="56dp"
+        android:text="Pump Now"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:textAllCaps="false" />
 
-    <Button
+    <TextView
         android:id="@+id/stopButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="Stop" />
+        android:background="@drawable/bg_button_red"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:importantForAccessibility="yes"
+        android:minHeight="56dp"
+        android:text="Stop"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:textAllCaps="false" />
 
 </LinearLayout>

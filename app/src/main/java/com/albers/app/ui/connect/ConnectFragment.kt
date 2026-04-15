@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import com.albers.app.MainActivity
+import com.albers.app.R
 import com.albers.app.ble.AlbersBleManager
 import com.albers.app.ble.BleConnectionState
 import com.albers.app.databinding.FragmentConnectBinding
@@ -63,6 +64,8 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
         binding.openDashboardButton.setOnClickListener {
             (requireActivity() as MainActivity).showDashboard()
         }
+
+        refreshButtonBackgrounds()
     }
 
     private fun startBleScan() {
@@ -71,6 +74,7 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
         binding.connectButton.isEnabled = false
         binding.openDashboardButton.isEnabled = false
         binding.statusText.text = "Scanning for ALBERS..."
+        refreshButtonBackgrounds()
         bleManager?.startScan()
     }
 
@@ -84,6 +88,7 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
 
         binding.statusText.text = "Connecting to ${device.name ?: device.address}..."
         binding.connectButton.isEnabled = false
+        refreshButtonBackgrounds()
         bleManager?.connect(device)
     }
 
@@ -111,6 +116,7 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
             if (!isScanning && selectedDevice == null) {
                 binding.statusText.text = "No ALBERS device found yet."
             }
+            refreshButtonBackgrounds()
         }
     }
 
@@ -122,6 +128,7 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
             binding.selectedDeviceText.text = "Selected device: $deviceLabel"
             binding.statusText.text = "ALBERS device found. Ready to connect."
             binding.connectButton.isEnabled = true
+            refreshButtonBackgrounds()
         }
     }
 
@@ -149,6 +156,7 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
                     binding.openDashboardButton.isEnabled = false
                 }
             }
+            refreshButtonBackgrounds()
         }
     }
 
@@ -156,6 +164,7 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
         runOnUiThread {
             binding.statusText.text = "Connected. ${serviceUuids.size} GATT services discovered."
             binding.openDashboardButton.isEnabled = true
+            refreshButtonBackgrounds()
         }
     }
 
@@ -172,8 +181,29 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
             binding.statusText.text = message
             binding.scanButton.isEnabled = true
             binding.connectButton.isEnabled = selectedDevice != null
+            refreshButtonBackgrounds()
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun refreshButtonBackgrounds() {
+        binding.scanButton.setBackgroundResource(
+            if (binding.scanButton.isEnabled) R.drawable.bg_button_green else R.drawable.bg_button_disabled
+        )
+        binding.connectButton.setBackgroundResource(
+            if (binding.connectButton.isEnabled) R.drawable.bg_button_secondary else R.drawable.bg_button_disabled
+        )
+        binding.openDashboardButton.setBackgroundResource(
+            if (binding.openDashboardButton.isEnabled) R.drawable.bg_button_secondary else R.drawable.bg_button_disabled
+        )
+
+        val enabledTextColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
+        val disabledTextColor = ContextCompat.getColor(requireContext(), R.color.disabled_text)
+        binding.scanButton.setTextColor(if (binding.scanButton.isEnabled) enabledTextColor else disabledTextColor)
+        binding.connectButton.setTextColor(if (binding.connectButton.isEnabled) enabledTextColor else disabledTextColor)
+        binding.openDashboardButton.setTextColor(
+            if (binding.openDashboardButton.isEnabled) enabledTextColor else disabledTextColor
+        )
     }
 
     private fun runOnUiThread(action: () -> Unit) {

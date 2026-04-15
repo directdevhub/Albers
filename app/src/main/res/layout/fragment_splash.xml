@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_screen_primary"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="24dp"
@@ -13,6 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
+        android:textColor="@color/text_primary"
         android:textAppearance="?attr/textAppearanceHeadlineMedium" />
 
     <TextView
@@ -22,13 +24,22 @@
         android:layout_marginTop="12dp"
         android:gravity="center"
         android:text="BLE pumping system monitor and control"
+        android:textColor="@color/text_secondary"
         android:textAppearance="?attr/textAppearanceBodyLarge" />
 
-    <Button
+    <TextView
         android:id="@+id/continueButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Continue" />
+        android:background="@drawable/bg_button_green"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:importantForAccessibility="yes"
+        android:minHeight="56dp"
+        android:text="Continue"
+        android:textColor="@color/text_primary"
+        android:textStyle="bold" />
 
 </LinearLayout>
