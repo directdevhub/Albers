@@ -126,7 +126,7 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
             selectedDevice = device
             val deviceLabel = device.name ?: device.address
             binding.selectedDeviceText.text = "Selected device: $deviceLabel"
-            binding.statusText.text = "ALBERS device found. Ready to connect."
+            binding.statusText.text = "ALBERS device found. Tap Connect."
             binding.connectButton.isEnabled = true
             refreshButtonBackgrounds()
         }

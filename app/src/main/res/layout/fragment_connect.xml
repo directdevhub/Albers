@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Ready to scan for the ALBERS BLE device."
+        android:text="Turn on Albers_BLE_BAL3, pair with PIN 333333 if needed, then find the device here."
         android:textColor="@color/text_secondary"
         android:textAppearance="?attr/textAppearanceBodyLarge" />
 
@@ -46,7 +46,7 @@
         android:gravity="center"
         android:importantForAccessibility="yes"
         android:minHeight="56dp"
-        android:text="Scan for Device"
+        android:text="Find ALBERS Device"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
         android:textAllCaps="false" />

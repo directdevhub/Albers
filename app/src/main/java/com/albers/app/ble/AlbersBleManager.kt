@@ -6,11 +6,12 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import java.util.UUID
 
@@ -22,6 +23,7 @@ class AlbersBleManager(
         context.applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
     private val bluetoothLeScanner get() = bluetoothAdapter?.bluetoothLeScanner
+    private val mainHandler = Handler(Looper.getMainLooper())
     private val discoveredDeviceAddresses = mutableSetOf<String>()
     private val gattCallback = GattCallback(
         onConnectionStateChanged = ::handleConnectionStateChanged,
@@ -41,7 +43,7 @@ class AlbersBleManager(
             val deviceName = result.scanRecord?.deviceName ?: device.name
             Log.d(TAG, "Scan result: name=$deviceName address=${device.address}")
 
-            if (deviceName?.contains(TARGET_DEVICE_NAME, ignoreCase = true) != true) {
+            if (!isAlbersDeviceName(deviceName)) {
                 return
             }
 
@@ -70,18 +72,28 @@ class AlbersBleManager(
             return
         }
 
-        val scanner = bluetoothLeScanner
-        if (bluetoothAdapter?.isEnabled != true || scanner == null) {
+        if (bluetoothAdapter?.isEnabled != true) {
             callback.onError("Bluetooth is unavailable or disabled")
             return
         }
 
         discoveredDeviceAddresses.clear()
+        val bondedMatches = emitBondedAlbersDevices()
+
+        val scanner = bluetoothLeScanner
+        if (scanner == null) {
+            if (bondedMatches == 0) {
+                callback.onError("BLE scanner is unavailable. Confirm Bluetooth and Location are enabled.")
+            }
+            return
+        }
+
         isScanning = true
-        Log.d(TAG, "Starting BLE scan for $TARGET_DEVICE_NAME")
+        Log.d(TAG, "Starting broad BLE scan for $TARGET_DEVICE_NAME")
         callback.onScanStateChanged(isScanning = true)
 
-        scanner.startScan(buildScanFilters(), buildScanSettings(), scanCallback)
+        scanner.startScan(null, buildScanSettings(), scanCallback)
+        mainHandler.postDelayed(scanTimeoutRunnable, SCAN_TIMEOUT_MS)
     }
 
     @SuppressLint("MissingPermission")
@@ -92,6 +104,7 @@ class AlbersBleManager(
 
         Log.d(TAG, "Stopping BLE scan")
         bluetoothLeScanner?.stopScan(scanCallback)
+        mainHandler.removeCallbacks(scanTimeoutRunnable)
         isScanning = false
         callback.onScanStateChanged(isScanning = false)
     }
@@ -173,12 +186,28 @@ class AlbersBleManager(
         disconnect()
     }
 
-    private fun buildScanFilters(): List<ScanFilter> {
-        return listOf(
-            ScanFilter.Builder()
-                .setDeviceName(TARGET_DEVICE_NAME)
-                .build()
-        )
+    @SuppressLint("MissingPermission")
+    private fun emitBondedAlbersDevices(): Int {
+        val bondedDevices = bluetoothAdapter?.bondedDevices.orEmpty()
+        Log.d(TAG, "Checking bonded devices: count=${bondedDevices.size}")
+
+        var matchCount = 0
+        bondedDevices
+            .filter { device -> isAlbersDeviceName(device.name) }
+            .forEach { device ->
+                if (discoveredDeviceAddresses.add(device.address)) {
+                    matchCount++
+                    Log.d(TAG, "Bonded ALBERS device found: name=${device.name} address=${device.address}")
+                    callback.onDeviceFound(device)
+                }
+            }
+        return matchCount
+    }
+
+    private fun isAlbersDeviceName(deviceName: String?): Boolean {
+        return deviceName != null && ALBERS_DEVICE_NAME_HINTS.any { hint ->
+            deviceName.contains(hint, ignoreCase = true)
+        }
     }
 
     private fun buildScanSettings(): ScanSettings {
@@ -200,6 +229,13 @@ class AlbersBleManager(
         callback.onServicesDiscovered(serviceUuids)
     }
 
+    private val scanTimeoutRunnable = Runnable {
+        if (isScanning) {
+            Log.d(TAG, "BLE scan timed out")
+            stopScan()
+        }
+    }
+
     interface Callback {
         fun onScanStateChanged(isScanning: Boolean)
         fun onDeviceFound(device: BluetoothDevice)
@@ -213,6 +249,12 @@ class AlbersBleManager(
     private companion object {
         private const val TAG = "AlbersBleManager"
         private const val TARGET_DEVICE_NAME = "ALBERS"
+        private val ALBERS_DEVICE_NAME_HINTS = listOf(
+            TARGET_DEVICE_NAME,
+            "Albers_BLE",
+            "Albers_BLE_BAL3"
+        )
+        private const val SCAN_TIMEOUT_MS = 15_000L
     }
 }
 
