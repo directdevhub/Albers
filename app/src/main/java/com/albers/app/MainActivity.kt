@@ -1,6 +1,9 @@
 package com.albers.app
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -9,10 +12,20 @@ import androidx.fragment.app.Fragment
 import com.albers.app.databinding.ActivityMainBinding
 import com.albers.app.ui.connect.ConnectFragment
 import com.albers.app.ui.dashboard.DashboardFragment
+import com.albers.app.ui.help.HelpFragment
+import com.albers.app.ui.notifications.NotificationsFragment
+import com.albers.app.ui.rinse.RinseFragment
+import com.albers.app.ui.settings.SettingsFragment
 import com.albers.app.ui.splash.SplashFragment
+import com.albers.app.ui.systemstatus.SystemStatusFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        // Alerts still appear in-app when notification permission is denied.
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             showSplash()
         }
+        requestNotificationPermissionIfNeeded()
     }
 
     fun showSplash() {
@@ -43,6 +57,26 @@ class MainActivity : AppCompatActivity() {
         replaceFragment(DashboardFragment.newInstance(), addToBackStack = true)
     }
 
+    fun showSystemStatus() {
+        replaceFragment(SystemStatusFragment.newInstance(), addToBackStack = true)
+    }
+
+    fun showSettings() {
+        replaceFragment(SettingsFragment.newInstance(), addToBackStack = true)
+    }
+
+    fun showRinse() {
+        replaceFragment(RinseFragment.newInstance(), addToBackStack = true)
+    }
+
+    fun showNotifications() {
+        replaceFragment(NotificationsFragment.newInstance(), addToBackStack = true)
+    }
+
+    fun showHelp() {
+        replaceFragment(HelpFragment.newInstance(), addToBackStack = true)
+    }
+
     private fun replaceFragment(fragment: Fragment, addToBackStack: Boolean) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
@@ -52,5 +86,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             .commit()
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 }

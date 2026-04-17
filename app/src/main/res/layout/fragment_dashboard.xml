@@ -1,93 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_screen_primary"
-    android:orientation="vertical"
-    android:padding="24dp"
+    android:fillViewport="true"
     tools:context=".ui.dashboard.DashboardFragment">
 
-    <TextView
-        android:id="@+id/dashboardTitleText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Dashboard"
-        android:textColor="@color/text_primary"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall" />
-
     <LinearLayout
-        android:id="@+id/controlPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/bg_card_rounded"
-        android:gravity="center"
-        android:minHeight="220dp"
+        android:minHeight="720dp"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="24dp">
 
-        <TextView
-            android:id="@+id/deviceStateText"
+        <include
+            android:id="@+id/dashboardHeader"
+            layout="@layout/include_albers_header" />
+
+        <LinearLayout
+            android:id="@+id/dashboardPowerRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
             android:gravity="center"
-            android:text="Device state: Not connected"
-            android:textColor="@color/status_off"
-            android:textAppearance="?attr/textAppearanceBodyLarge" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/timerText"
+            <TextView
+                android:id="@+id/deviceStateText"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                android:background="@drawable/bg_button_green"
+                android:drawableTop="@drawable/ic_power"
+                android:gravity="center"
+                android:padding="14dp"
+                android:text="ON"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/stopButton"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                android:layout_marginStart="36dp"
+                android:background="@drawable/bg_button_red"
+                android:clickable="true"
+                android:drawableTop="@drawable/ic_power"
+                android:focusable="true"
+                android:gravity="center"
+                android:padding="14dp"
+                android:text="STOP"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/controlPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_card_rounded"
             android:gravity="center"
-            android:text="Automatic pump cycle not started"
-            android:textColor="@color/text_secondary"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+            android:orientation="vertical"
+            android:padding="20dp">
 
-        <TextView
-            android:id="@+id/pumpStatusText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:gravity="center"
-            android:text="Pump status: Idle"
-            android:textColor="@color/status_on"
-            android:textAppearance="?attr/textAppearanceBodyLarge" />
+            <TextView
+                android:id="@+id/timerText"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:background="@drawable/bg_timer_window"
+                android:gravity="center"
+                android:text="01:30:00"
+                android:textColor="@color/text_primary"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dashboardCountdownLabelText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="Automatic Pump Cycle Countdown"
+                android:textColor="@color/text_secondary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/timerOverrideLabelText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
+                android:text="Timer Override"
+                android:textColor="@color/text_muted"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pumpStatusText"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_status_chip_on"
+                android:gravity="center"
+                android:text="Pump status: Idle"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pumpNowButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_button_secondary"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="PUMP NOW"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pumpingStateBanner"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_button_red"
+                android:gravity="center"
+                android:text="PUMPING"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/dashboardWarningText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_warning_box"
+                android:padding="14dp"
+                android:text="Warnings appear here when battery, pressure, or pump current needs attention."
+                android:textColor="@color/text_secondary"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <include
+            android:id="@+id/dashboardBottomNav"
+            layout="@layout/include_bottom_nav" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/pumpNowButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/bg_button_green"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:importantForAccessibility="yes"
-        android:minHeight="56dp"
-        android:text="Pump Now"
-        android:textStyle="bold"
-        android:textColor="@color/text_primary"
-        android:textAllCaps="false" />
-
-    <TextView
-        android:id="@+id/stopButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/bg_button_red"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:importantForAccessibility="yes"
-        android:minHeight="56dp"
-        android:text="Stop"
-        android:textStyle="bold"
-        android:textColor="@color/text_primary"
-        android:textAllCaps="false" />
-
-</LinearLayout>
+</ScrollView>
