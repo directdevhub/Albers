@@ -147,7 +147,9 @@
 
         </LinearLayout>
 
-        <include layout="@layout/include_bottom_nav_disconnected" />
+        <include
+            android:id="@+id/connectBottomNav"
+            layout="@layout/include_bottom_nav_disconnected" />
 
         <TextView
             android:id="@+id/openDashboardButton"

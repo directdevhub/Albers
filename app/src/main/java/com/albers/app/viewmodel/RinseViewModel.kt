@@ -2,6 +2,7 @@ package com.albers.app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.albers.app.ble.AlbersBleSession
 import com.albers.app.data.repository.AlbersRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -20,6 +21,14 @@ class RinseViewModel : ViewModel() {
             )
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RinseUiState())
+
+    fun startRinseCycle() {
+        AlbersBleSession.startRinseCycle()
+    }
+
+    fun emergencyStop() {
+        AlbersBleSession.stopPumpOrCycle()
+    }
 }
 
 data class RinseUiState(

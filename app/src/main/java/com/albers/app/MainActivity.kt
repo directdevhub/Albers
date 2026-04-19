@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import com.albers.app.ble.AlbersBleSession
 import com.albers.app.databinding.ActivityMainBinding
 import com.albers.app.ui.connect.ConnectFragment
 import com.albers.app.ui.dashboard.DashboardFragment
@@ -92,5 +93,12 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
+    }
+
+    override fun onDestroy() {
+        if (isFinishing) {
+            AlbersBleSession.release()
+        }
+        super.onDestroy()
     }
 }

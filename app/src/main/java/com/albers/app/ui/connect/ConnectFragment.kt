@@ -1,8 +1,6 @@
 package com.albers.app.ui.connect
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.location.LocationManager
 import android.os.Build
@@ -10,33 +8,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.albers.app.MainActivity
 import com.albers.app.R
-import com.albers.app.ble.AlbersGattProfile
-import com.albers.app.ble.AlbersBleManager
-import com.albers.app.ble.BleConnectionState
-import com.albers.app.data.model.DeviceConnectionState
-import com.albers.app.data.repository.AlbersRepository
-import com.albers.app.data.parser.AlbersBleParser
+import com.albers.app.ble.BleSessionPhase
 import com.albers.app.databinding.FragmentConnectBinding
-import java.util.UUID
+import com.albers.app.viewmodel.ConnectViewModel
+import kotlinx.coroutines.launch
 
-class ConnectFragment : Fragment(), AlbersBleManager.Callback {
+class ConnectFragment : Fragment() {
     private var _binding: FragmentConnectBinding? = null
     private val binding get() = requireNotNull(_binding)
-    private var bleManager: AlbersBleManager? = null
-    private var selectedDevice: BluetoothDevice? = null
+    private lateinit var viewModel: ConnectViewModel
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         if (hasRequiredBlePermissions()) {
-            startBleScan()
+            viewModel.startConnectionFlow()
         } else {
             val deniedPermissions = permissions
                 .filterValues { granted -> !granted }
@@ -57,55 +53,30 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bleManager = AlbersBleManager(requireContext(), this)
+        viewModel = ViewModelProvider(this)[ConnectViewModel::class.java]
 
         binding.scanButton.setOnClickListener {
             if (hasRequiredBlePermissions()) {
-                startBleScan()
+                viewModel.startConnectionFlow()
             } else {
                 permissionLauncher.launch(requiredBlePermissions())
             }
         }
 
         binding.connectButton.setOnClickListener {
-            connectToSelectedDevice()
+            viewModel.connectSelectedDevice()
         }
 
         binding.openDashboardButton.setOnClickListener {
             (requireActivity() as MainActivity).showDashboard()
         }
 
-        refreshButtonBackgrounds()
-    }
-
-    private fun startBleScan() {
-        selectedDevice = null
-        AlbersRepository.setLoading(true)
-        binding.selectedDeviceText.text = "Selected device: none"
-        binding.connectButton.isEnabled = false
-        binding.openDashboardButton.isEnabled = false
-        binding.statusText.text = if (isLocationEnabled()) {
-            "Scanning for ALBERS..."
-        } else {
-            "Scanning for ALBERS... If no device appears, turn phone Location/GPS on and scan again."
-        }
-        refreshButtonBackgrounds()
-        bleManager?.startScan()
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun connectToSelectedDevice() {
-        val device = selectedDevice
-        if (device == null) {
-            binding.statusText.text = "Scan and select an ALBERS device first."
-            return
+        binding.connectBottomNav.helpNavButton.setOnClickListener {
+            (requireActivity() as MainActivity).showHelp()
         }
 
-        binding.statusText.text = "Connecting to ${device.name ?: device.address}..."
-        binding.connectButton.isEnabled = false
-        AlbersRepository.updateConnectionState(DeviceConnectionState.Connecting)
+        observeConnectState()
         refreshButtonBackgrounds()
-        bleManager?.connect(device)
     }
 
     private fun requiredBlePermissions(): Array<String> {
@@ -141,115 +112,6 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
         }
     }
 
-    override fun onScanStateChanged(isScanning: Boolean) {
-        runOnUiThread {
-            binding.scanButton.isEnabled = !isScanning
-            if (!isScanning && selectedDevice == null) {
-                binding.statusText.text = "No ALBERS device found yet."
-            }
-            refreshButtonBackgrounds()
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun onDeviceFound(device: BluetoothDevice) {
-        runOnUiThread {
-            selectedDevice = device
-            val deviceLabel = device.name ?: device.address
-            binding.selectedDeviceText.text = "Selected device: $deviceLabel"
-            binding.statusText.text = "ALBERS device found. Tap Connect."
-            binding.connectButton.isEnabled = true
-            refreshButtonBackgrounds()
-        }
-    }
-
-    override fun onConnectionStateChanged(state: BleConnectionState) {
-        runOnUiThread {
-            when (state) {
-                BleConnectionState.Pairing -> {
-                    AlbersRepository.updateConnectionState(DeviceConnectionState.Connecting)
-                    binding.statusText.text = "Pairing with ALBERS. Use PIN 333333 if Android asks."
-                    binding.connectButton.isEnabled = false
-                    binding.openDashboardButton.isEnabled = false
-                }
-
-                BleConnectionState.Connected -> {
-                    AlbersRepository.updateConnectionState(DeviceConnectionState.Connected)
-                    binding.statusText.text = "Connected. Discovering services..."
-                    binding.connectButton.isEnabled = false
-                }
-
-                BleConnectionState.Connecting -> {
-                    AlbersRepository.updateConnectionState(DeviceConnectionState.Connecting)
-                    binding.statusText.text = "Connecting..."
-                    binding.connectButton.isEnabled = false
-                }
-
-                BleConnectionState.Reconnecting -> {
-                    AlbersRepository.updateConnectionState(DeviceConnectionState.Reconnecting)
-                    binding.statusText.text = "Connection lost. Reconnecting..."
-                    binding.openDashboardButton.isEnabled = false
-                }
-
-                BleConnectionState.Disconnecting -> {
-                    AlbersRepository.updateConnectionState(DeviceConnectionState.Reconnecting)
-                    binding.statusText.text = "Disconnecting..."
-                    binding.openDashboardButton.isEnabled = false
-                }
-
-                BleConnectionState.Disconnected -> {
-                    AlbersRepository.updateConnectionState(DeviceConnectionState.Disconnected)
-                    binding.statusText.text = "Disconnected."
-                    binding.connectButton.isEnabled = selectedDevice != null
-                    binding.openDashboardButton.isEnabled = false
-                }
-            }
-            refreshButtonBackgrounds()
-        }
-    }
-
-    override fun onServicesDiscovered(serviceUuids: List<UUID>) {
-        runOnUiThread {
-            binding.statusText.text = "Connected. Reading ALBERS status..."
-            binding.openDashboardButton.isEnabled = true
-            refreshButtonBackgrounds()
-        }
-    }
-
-    override fun onCharacteristicRead(characteristicUuid: UUID, value: ByteArray) {
-        val shortUuid = with(AlbersGattProfile) { characteristicUuid.shortUuidOrNull() }
-        when (shortUuid) {
-            AlbersGattProfile.ADC_SYS_SHORT_UUID -> AlbersRepository.updateFromAdcSys(value)
-            AlbersGattProfile.TIMER_SYS_SHORT_UUID -> AlbersRepository.updateFromTimerSys(value)
-            AlbersGattProfile.SAVED_SHORT_UUID -> AlbersRepository.updateFromSavedDiagnostics(value)
-            else -> parseByPayloadSize(characteristicUuid, value)
-        }
-    }
-
-    private fun parseByPayloadSize(characteristicUuid: UUID, value: ByteArray) {
-        when {
-            value.size == 4 -> AlbersRepository.updateFromTimerSys(value)
-            value.size == AlbersBleParser.ADC_SYS_ENTRY_SIZE_BYTES -> AlbersRepository.updateFromAdcSys(value)
-            value.size > AlbersBleParser.ADC_SYS_ENTRY_SIZE_BYTES -> AlbersRepository.updateFromSavedDiagnostics(value)
-            else -> AlbersRepository.setError("Unsupported BLE payload from $characteristicUuid (${value.size} bytes)")
-        }
-    }
-
-    override fun onCharacteristicWrite(characteristicUuid: UUID, success: Boolean) {
-        // Command write handling will be added with dashboard actions.
-    }
-
-    override fun onError(message: String, cause: Throwable?) {
-        AlbersRepository.setError(message)
-        runOnUiThread {
-            binding.statusText.text = message
-            binding.scanButton.isEnabled = true
-            binding.connectButton.isEnabled = selectedDevice != null
-            refreshButtonBackgrounds()
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun refreshButtonBackgrounds() {
         binding.scanButton.setBackgroundResource(
             if (binding.scanButton.isEnabled) R.drawable.bg_button_green else R.drawable.bg_button_disabled
@@ -270,17 +132,32 @@ class ConnectFragment : Fragment(), AlbersBleManager.Callback {
         )
     }
 
-    private fun runOnUiThread(action: () -> Unit) {
-        activity?.runOnUiThread {
-            if (_binding != null) {
-                action()
+    private fun observeConnectState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    val locationHint = if (state.phase == BleSessionPhase.Scanning && !isLocationEnabled()) {
+                        " If no device appears, turn phone Location/GPS on and scan again."
+                    } else {
+                        ""
+                    }
+                    binding.statusText.text = state.statusMessage + locationHint
+                    binding.selectedDeviceText.text = state.selectedDeviceLabel
+                    binding.scanButton.isEnabled = state.canScan
+                    binding.connectButton.isEnabled = state.canConnect
+                    binding.openDashboardButton.isEnabled = state.phase == BleSessionPhase.Ready
+                    refreshButtonBackgrounds()
+
+                    if (state.shouldOpenDashboard) {
+                        viewModel.consumeDashboardNavigation()
+                        (requireActivity() as MainActivity).showDashboard()
+                    }
+                }
             }
         }
     }
 
     override fun onDestroyView() {
-        bleManager?.release()
-        bleManager = null
         super.onDestroyView()
         _binding = null
     }

@@ -6,6 +6,7 @@ import com.albers.app.data.model.DeviceConnectionState
 import com.albers.app.data.model.FaultSeverity
 import com.albers.app.data.model.FaultState
 import com.albers.app.data.repository.AlbersRepository
+import com.albers.app.ble.AlbersBleSession
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -46,11 +47,11 @@ class DashboardViewModel : ViewModel() {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DashboardUiState())
 
     fun onPumpNowClicked() {
-        AlbersRepository.recordPumpCycleCompleted()
+        AlbersBleSession.pumpNow()
     }
 
     fun onStopClicked() {
-        AlbersRepository.updateConnectionState(DeviceConnectionState.Disconnected)
+        AlbersBleSession.stopPumpOrCycle()
     }
 
     private fun Int.toCountdownText(): String {

@@ -18,6 +18,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.core.content.ContextCompat
+import java.lang.reflect.Method
 import java.util.UUID
 
 class AlbersBleManager(
@@ -44,12 +45,14 @@ class AlbersBleManager(
     private var pendingBondDevice: BluetoothDevice? = null
     private var userRequestedDisconnect = false
     private var reconnectAttempts = 0
+    private var lastConnectionFailureMessage: String? = null
     private var suppressNextReconnect = false
     private var bondReceiverRegistered = false
     private val pendingReadShortUuids = ArrayDeque<Int>()
     private val readRetryCounts = mutableMapOf<Int, Int>()
     private var readInProgress = false
     private var currentReadShortUuid: Int? = null
+    private var protectedReadReconnectAttempts = 0
 
     private val bondStateReceiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -182,6 +185,8 @@ class AlbersBleManager(
         currentDevice = device
         userRequestedDisconnect = false
         reconnectAttempts = 0
+        lastConnectionFailureMessage = null
+        protectedReadReconnectAttempts = 0
         suppressNextReconnect = false
         Log.d(TAG, "Connecting to device: address=${device.address}")
         connectWhenBonded(device)
@@ -192,6 +197,7 @@ class AlbersBleManager(
         Log.d(TAG, "Disconnect requested")
         userRequestedDisconnect = true
         reconnectAttempts = 0
+        lastConnectionFailureMessage = null
         pendingBondDevice = null
         unregisterBondReceiver()
         callback.onConnectionStateChanged(BleConnectionState.Disconnecting)
@@ -327,6 +333,7 @@ class AlbersBleManager(
         readRetryCounts.clear()
         readInProgress = false
         currentReadShortUuid = null
+        bluetoothGatt?.refreshDeviceCache()
         bluetoothGatt?.close()
         bluetoothGatt = null
     }
@@ -404,9 +411,12 @@ class AlbersBleManager(
                         val device = currentDevice ?: return@postDelayed
                         Log.d(TAG, "Reconnect attempt $reconnectAttempts to ${device.address}")
                         callback.onConnectionStateChanged(BleConnectionState.Connecting)
-                        bluetoothGatt = openGatt(device)
+                        connectWhenBonded(device)
                     }, RECONNECT_DELAY_MS)
                 } else {
+                    lastConnectionFailureMessage?.let { message ->
+                        callback.onError(message)
+                    }
                     callback.onConnectionStateChanged(state)
                 }
             }
@@ -420,17 +430,28 @@ class AlbersBleManager(
             val failedShortUuid = currentReadShortUuid
             readInProgress = false
             currentReadShortUuid = null
-            if (failedShortUuid != null && shouldRetryRead(message, failedShortUuid)) {
-                scheduleReadRetry(failedShortUuid)
-                return
-            }
-            if (message.contains("status 133", ignoreCase = true)) {
+            if (failedShortUuid != null && message.contains("status 133", ignoreCase = true)) {
+                if (shouldReconnectForProtectedRead()) {
+                    scheduleProtectedReadReconnect(failedShortUuid)
+                    return
+                }
                 callback.onError(
-                    "ALBERS connected, but secure data read failed. This usually means the Bluetooth bond is stale. Forget/unpair Albers_BLE_BAL3 in Android Bluetooth settings, pair again with PIN 333333, then retry in the app.",
+                    "ALBERS secure diagnostic read failed after reconnect attempts. Forget/unpair Albers_BLE_BAL3 in Android Bluetooth settings, pair again with PIN 333333, then retry in the app.",
                     cause
                 )
                 return
             }
+            if (failedShortUuid != null && shouldRetryRead(message, failedShortUuid)) {
+                scheduleReadRetry(failedShortUuid)
+                return
+            }
+        }
+
+        if (message.contains("status 34", ignoreCase = true)) {
+            lastConnectionFailureMessage =
+                "ALBERS link setup failed with GATT status 34. Keeping the app in reconnect mode; if this repeats, power-cycle ALBERS, forget/unpair Albers_BLE_BAL3, pair again with PIN 333333, then retry."
+            Log.w(TAG, lastConnectionFailureMessage.orEmpty())
+            return
         }
 
         if (message.contains("status 5", ignoreCase = true)) {
@@ -458,6 +479,7 @@ class AlbersBleManager(
     private fun handleCharacteristicRead(characteristicUuid: UUID, value: ByteArray) {
         readInProgress = false
         currentReadShortUuid = null
+        protectedReadReconnectAttempts = 0
         callback.onCharacteristicRead(characteristicUuid, value)
         readNextQueuedCharacteristic()
     }
@@ -524,6 +546,37 @@ class AlbersBleManager(
             pendingReadShortUuids.addFirst(shortUuid)
             readNextQueuedCharacteristic()
         }, READ_RETRY_DELAY_MS)
+    }
+
+    private fun shouldReconnectForProtectedRead(): Boolean {
+        return protectedReadReconnectAttempts < MAX_PROTECTED_READ_RECONNECT_ATTEMPTS
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun scheduleProtectedReadReconnect(shortUuid: Int) {
+        protectedReadReconnectAttempts += 1
+        Log.w(
+            TAG,
+            "Protected read failed for 0x${shortUuid.toHexShort()} with GATT 133. " +
+                "Reconnecting GATT $protectedReadReconnectAttempts/$MAX_PROTECTED_READ_RECONNECT_ATTEMPTS"
+        )
+        callback.onConnectionStateChanged(BleConnectionState.Reconnecting)
+        closeGatt()
+        mainHandler.postDelayed({
+            val device = currentDevice ?: return@postDelayed
+            callback.onConnectionStateChanged(BleConnectionState.Connecting)
+            connectWhenBonded(device)
+        }, PROTECTED_READ_RECONNECT_DELAY_MS)
+    }
+
+    private fun BluetoothGatt.refreshDeviceCache() {
+        runCatching {
+            val refreshMethod: Method = javaClass.getMethod("refresh")
+            val refreshed = refreshMethod.invoke(this) as? Boolean == true
+            Log.d(TAG, "GATT cache refresh requested: $refreshed")
+        }.onFailure { error ->
+            Log.d(TAG, "GATT cache refresh unavailable", error)
+        }
     }
 
     @SuppressLint("MissingPermission", "ObsoleteSdkInt", "DEPRECATION")
@@ -608,11 +661,13 @@ class AlbersBleManager(
             "00:80:E1"
         )
         private const val SCAN_TIMEOUT_MS = 15_000L
-        private const val MAX_RECONNECT_ATTEMPTS = 3
-        private const val RECONNECT_DELAY_MS = 2_000L
-        private const val POST_DISCOVERY_READ_DELAY_MS = 900L
-        private const val READ_RETRY_DELAY_MS = 1_200L
+        private const val MAX_RECONNECT_ATTEMPTS = 5
+        private const val RECONNECT_DELAY_MS = 3_500L
+        private const val POST_DISCOVERY_READ_DELAY_MS = 2_500L
+        private const val READ_RETRY_DELAY_MS = 2_000L
         private const val MAX_READ_RETRY_ATTEMPTS = 2
+        private const val MAX_PROTECTED_READ_RECONNECT_ATTEMPTS = 2
+        private const val PROTECTED_READ_RECONNECT_DELAY_MS = 3_000L
     }
 }
 

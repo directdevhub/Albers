@@ -35,13 +35,19 @@ class RinseFragment : Fragment() {
         binding.backButton.setOnClickListener { parentFragmentManager.popBackStack() }
         binding.helpButton.setOnClickListener { (requireActivity() as MainActivity).showHelp() }
         binding.systemStatusButton.setOnClickListener { (requireActivity() as MainActivity).showSystemStatus() }
+        binding.startRinseButton.setOnClickListener { viewModel.startRinseCycle() }
+        binding.emergencyStopRinseButton.setOnClickListener { viewModel.emergencyStop() }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.startRinseButton.isEnabled = state.canStart
+                    binding.emergencyStopRinseButton.isEnabled = state.canStart
                     binding.startRinseButton.setBackgroundResource(
                         if (state.canStart) R.drawable.bg_button_green else R.drawable.bg_button_disabled
+                    )
+                    binding.emergencyStopRinseButton.setBackgroundResource(
+                        if (state.canStart) R.drawable.bg_button_red else R.drawable.bg_button_disabled
                     )
                     binding.rinseAvailabilityText.text = state.availabilityMessage
                 }

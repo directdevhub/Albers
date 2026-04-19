@@ -25,7 +25,6 @@ class GattCallback(
         if (status != BluetoothGatt.GATT_SUCCESS) {
             Log.e(TAG, "GATT connection error: status=$status address=$deviceAddress")
             onError("GATT connection failed with status $status", null)
-            gatt.close()
             onConnectionStateChanged(gatt, BleConnectionState.Disconnected)
             return
         }
@@ -41,7 +40,6 @@ class GattCallback(
 
             BluetoothProfile.STATE_DISCONNECTED -> {
                 Log.d(TAG, "GATT disconnected: address=$deviceAddress")
-                gatt.close()
                 onConnectionStateChanged(gatt, BleConnectionState.Disconnected)
             }
 
