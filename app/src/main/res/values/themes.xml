@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Base.Theme.Albers" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowBackground">@color/bg_primary</item>
         <item name="android:colorAccent">@color/accent_blue</item>
@@ -19,5 +19,5 @@
         <item name="android:textColorSecondary">@color/text_secondary</item>
     </style>
 
-    <style name="Theme.Albers" parent="Base.Theme.Albers" />
+    <style name="AppTheme.Albers" parent="Base.Theme.Albers" />
 </resources>

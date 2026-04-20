@@ -5,7 +5,7 @@
     <color name="white">#FFFFFF</color>
 
     <!-- App Background -->
-    <color name="bg_primary">#121A24</color>
+    <color name="bg_primary">#000000</color>
     <color name="bg_secondary">#1B2430</color>
     <color name="bg_card">#202B38</color>
 

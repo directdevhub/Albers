@@ -6,13 +6,13 @@ plugins {
 android {
     namespace = "com.albers.app"
     compileSdk {
-        version = release(36)
+        version = release(35)
     }
 
     defaultConfig {
         applicationId = "com.albers.app"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 

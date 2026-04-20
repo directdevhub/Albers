@@ -1,6 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Albers</string>
     <string name="turn_on_albers_ble_bal3_pair_with_pin_333333_if_needed_then_find_the_device_here">Turn on Albers_BLE_BAL3, pair with PIN 333333 if needed, then find the device here.</string>
-    <string name="timer_override">Timer Override</string>
-    <string name="open_dashboard">Open Dashboard</string>
 </resources>

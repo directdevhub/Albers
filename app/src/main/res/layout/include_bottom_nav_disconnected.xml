@@ -1,74 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottomNavDisconnectedContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_screen_primary"
     android:gravity="center"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:paddingTop="12dp">
 
-    <TextView
-        android:id="@+id/systemStatusNavButton"
-        android:layout_width="0dp"
-        android:layout_height="88dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_bottom_nav_item"
-        android:drawableTop="@drawable/ic_system_status"
-        android:enabled="false"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
         android:gravity="center"
-        android:padding="8dp"
-        android:text="System\nStatus"
-        android:textColor="@color/disabled_text"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/settingsNavButton"
-        android:layout_width="0dp"
-        android:layout_height="88dp"
-        android:layout_marginStart="8dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_bottom_nav_item"
-        android:drawableTop="@drawable/ic_settings"
-        android:enabled="false"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="Settings"
-        android:textColor="@color/disabled_text"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/systemStatusNavButton"
+            android:layout_width="114dp"
+            android:layout_height="124dp"
+            android:src="@drawable/ic_system_icon"
+            android:scaleType="centerInside"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-    <TextView
-        android:id="@+id/rinseNavButton"
-        android:layout_width="0dp"
-        android:layout_height="88dp"
-        android:layout_marginStart="8dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_bottom_nav_item"
-        android:drawableTop="@drawable/ic_rinse_sanitize"
-        android:enabled="false"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="Rinse\nSanitize"
-        android:textColor="@color/disabled_text"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/settingsNavButton"
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            android:src="@drawable/ic_setting"
+            android:scaleType="centerInside"
+            android:enabled="false"
+            app:layout_constraintEnd_toStartOf="@+id/rinseNavButton"
+            app:layout_constraintStart_toEndOf="@+id/systemStatusNavButton"/>
 
-    <TextView
+        <ImageView
+            android:id="@+id/rinseNavButton"
+            android:layout_width="114dp"
+            android:layout_height="124dp"
+            android:src="@drawable/ic_rinse_sanitize"
+            android:scaleType="centerInside"
+            android:enabled="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
         android:id="@+id/helpNavButton"
-        android:layout_width="0dp"
-        android:layout_height="88dp"
-        android:layout_marginStart="8dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_bottom_nav_item"
-        android:clickable="true"
-        android:drawableTop="@drawable/ic_help"
-        android:focusable="true"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="Help"
-        android:textColor="@color/text_primary"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        android:layout_width="114dp"
+        android:layout_height="124dp"
+        android:src="@drawable/ic_help"
+        android:scaleType="centerInside"
+        android:enabled="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </LinearLayout>
