@@ -27,6 +27,7 @@ class ConnectFragment : Fragment() {
     private var _binding: FragmentConnectBinding? = null
     private val binding get() = requireNotNull(_binding)
     private lateinit var viewModel: ConnectViewModel
+    private var hasRequestedInitialConnectionFlow = false
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -56,11 +57,7 @@ class ConnectFragment : Fragment() {
         viewModel = ViewModelProvider(this)[ConnectViewModel::class.java]
 
         binding.scanButton.setOnClickListener {
-            if (hasRequiredBlePermissions()) {
-                viewModel.startConnectionFlow()
-            } else {
-                permissionLauncher.launch(requiredBlePermissions())
-            }
+            requestConnectionFlow()
         }
 
         binding.connectButton.setOnClickListener {
@@ -68,7 +65,7 @@ class ConnectFragment : Fragment() {
         }
 
         binding.openDashboardButton.setOnClickListener {
-            (requireActivity() as MainActivity).showDashboard()
+            (requireActivity() as MainActivity).showDashboard(addToBackStack = false)
         }
 
         binding.connectBottomNav.helpNavButton.setOnClickListener {
@@ -77,6 +74,20 @@ class ConnectFragment : Fragment() {
 
         observeConnectState()
         refreshButtonBackgrounds()
+        binding.root.post {
+            if (!hasRequestedInitialConnectionFlow) {
+                hasRequestedInitialConnectionFlow = true
+                requestConnectionFlow()
+            }
+        }
+    }
+
+    private fun requestConnectionFlow() {
+        if (hasRequiredBlePermissions()) {
+            viewModel.startConnectionFlow()
+        } else {
+            permissionLauncher.launch(requiredBlePermissions())
+        }
     }
 
     private fun requiredBlePermissions(): Array<String> {
@@ -113,23 +124,27 @@ class ConnectFragment : Fragment() {
     }
 
     private fun refreshButtonBackgrounds() {
-        binding.scanButton.setBackgroundResource(
-            if (binding.scanButton.isEnabled) R.drawable.bg_button_green else R.drawable.bg_button_disabled
-        )
+        binding.scanButton.alpha = if (binding.scanButton.isEnabled) ENABLED_ALPHA else DISABLED_ALPHA
+        binding.startStopButton.alpha = DISABLED_ALPHA
+        binding.startStopButton.isEnabled = false
+
         binding.connectButton.setBackgroundResource(
             if (binding.connectButton.isEnabled) R.drawable.bg_button_secondary else R.drawable.bg_button_disabled
         )
-        binding.openDashboardButton.setBackgroundResource(
-            if (binding.openDashboardButton.isEnabled) R.drawable.bg_button_secondary else R.drawable.bg_button_disabled
-        )
+        binding.openDashboardButton.visibility = View.GONE
 
         val enabledTextColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
         val disabledTextColor = ContextCompat.getColor(requireContext(), R.color.disabled_text)
-        binding.scanButton.setTextColor(if (binding.scanButton.isEnabled) enabledTextColor else disabledTextColor)
         binding.connectButton.setTextColor(if (binding.connectButton.isEnabled) enabledTextColor else disabledTextColor)
-        binding.openDashboardButton.setTextColor(
-            if (binding.openDashboardButton.isEnabled) enabledTextColor else disabledTextColor
-        )
+
+        binding.connectBottomNav.systemStatusNavButton.isEnabled = false
+        binding.connectBottomNav.settingsNavButton.isEnabled = false
+        binding.connectBottomNav.rinseNavButton.isEnabled = false
+        binding.connectBottomNav.helpNavButton.isEnabled = true
+        binding.connectBottomNav.systemStatusNavButton.alpha = DISABLED_ALPHA
+        binding.connectBottomNav.settingsNavButton.alpha = DISABLED_ALPHA
+        binding.connectBottomNav.rinseNavButton.alpha = DISABLED_ALPHA
+        binding.connectBottomNav.helpNavButton.alpha = ENABLED_ALPHA
     }
 
     private fun observeConnectState() {
@@ -145,12 +160,12 @@ class ConnectFragment : Fragment() {
                     binding.selectedDeviceText.text = state.selectedDeviceLabel
                     binding.scanButton.isEnabled = state.canScan
                     binding.connectButton.isEnabled = state.canConnect
-                    binding.openDashboardButton.isEnabled = state.phase == BleSessionPhase.Ready
+                    binding.openDashboardButton.isEnabled = false
                     refreshButtonBackgrounds()
 
                     if (state.shouldOpenDashboard) {
                         viewModel.consumeDashboardNavigation()
-                        (requireActivity() as MainActivity).showDashboard()
+                        (requireActivity() as MainActivity).showDashboard(addToBackStack = false)
                     }
                 }
             }
@@ -163,6 +178,9 @@ class ConnectFragment : Fragment() {
     }
 
     companion object {
+        private const val ENABLED_ALPHA = 1f
+        private const val DISABLED_ALPHA = 0.2f
+
         fun newInstance(): ConnectFragment = ConnectFragment()
     }
 }

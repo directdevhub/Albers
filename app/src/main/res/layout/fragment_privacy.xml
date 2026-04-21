@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_screen_primary"
+    android:fillViewport="true"
+    tools:context=".ui.privacy.PrivacyFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="720dp"
+        android:padding="24dp">
+
+        <include
+            android:id="@+id/privacyHeader"
+            layout="@layout/include_albers_header" />
+
+        <TextView
+            android:id="@+id/privacyTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:gravity="center"
+            android:text="@string/privacy"
+            android:textColor="@color/white"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/privacyHeader" />
+
+        <ImageView
+            android:id="@+id/helpButton"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:layout_marginTop="48dp"
+            android:alpha="1"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_help"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/privacyTitleText" />
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:alpha="1"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

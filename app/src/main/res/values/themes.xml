@@ -19,5 +19,6 @@
         <item name="android:textColorSecondary">@color/text_secondary</item>
     </style>
 
-    <style name="AppTheme.Albers" parent="Base.Theme.Albers" />
+    <style name="AppTheme.Albers" parent="AppTheme" />
+
 </resources>

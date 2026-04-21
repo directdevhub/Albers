@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.albers.app.MainActivity
 import com.albers.app.R
 import com.albers.app.databinding.FragmentSystemStatusBinding
+import com.albers.app.viewmodel.SystemStatusIcon
 import com.albers.app.viewmodel.SystemStatusViewModel
 import kotlinx.coroutines.launch
 
@@ -42,13 +43,26 @@ class SystemStatusFragment : Fragment() {
                     binding.systemSummaryText.setTextColor(
                         resources.getColor(if (state.isNominal) R.color.status_on else R.color.status_warning, null)
                     )
-                    binding.systemNominalIcon.setImageResource(
-                        if (state.isNominal) R.drawable.ic_system_status else R.drawable.ic_hazard_warning
-                    )
+                    binding.systemNominalIcon.setImageResource(state.statusIcon.toDrawableRes())
                     binding.pumpOneStateText.text = state.pump1
                     binding.pumpTwoStateText.text = state.pump2
+                    binding.pumpOneIcon.setImageResource(
+                        if (state.pump1Failed) R.drawable.ic_pump_error_indicator else R.drawable.ic_pump
+                    )
+                    binding.pumpTwoIcon.setImageResource(
+                        if (state.pump2Failed) R.drawable.ic_pump_error_indicator else R.drawable.ic_pump
+                    )
+                    binding.pumpOneStateText.setTextColor(
+                        resources.getColor(if (state.pump1Failed) R.color.status_error else R.color.status_on, null)
+                    )
+                    binding.pumpTwoStateText.setTextColor(
+                        resources.getColor(if (state.pump2Failed) R.color.status_error else R.color.status_on, null)
+                    )
                     binding.batteryStatusValueText.text = "${state.battery} • ${state.batteryMode}"
-                    binding.pressureStatusText.text = "${state.pressure}\n${state.message}"
+                    binding.batteryStatusValueText.setTextColor(
+                        resources.getColor(if (state.isBatteryLow) R.color.status_error else R.color.white, null)
+                    )
+                    binding.pressureStatusText.visibility = View.GONE
                 }
             }
         }
@@ -61,5 +75,14 @@ class SystemStatusFragment : Fragment() {
 
     companion object {
         fun newInstance(): SystemStatusFragment = SystemStatusFragment()
+    }
+}
+
+private fun SystemStatusIcon.toDrawableRes(): Int {
+    return when (this) {
+        SystemStatusIcon.Nominal -> R.drawable.ic_system_icon
+        SystemStatusIcon.LowBattery -> R.drawable.ic_low_battery
+        SystemStatusIcon.EmergencyBattery -> R.drawable.ic_emgency_battery
+        SystemStatusIcon.PumpError -> R.drawable.ic_pump_error
     }
 }

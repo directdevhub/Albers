@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_screen_primary"
     android:fillViewport="true"
     tools:context=".ui.connect.ConnectFragment">
@@ -34,9 +34,9 @@
                 android:layout_height="80dp"
                 android:layout_marginEnd="40dp"
                 android:alpha="0.2"
-                android:src="@drawable/ic_scan_button"
+                android:clickable="true"
                 android:scaleType="centerInside"
-                android:clickable="true" />
+                android:src="@drawable/ic_scan_button" />
 
             <ImageView
                 android:id="@+id/startStopButton"
@@ -44,9 +44,9 @@
                 android:layout_height="80dp"
                 android:layout_marginStart="40dp"
                 android:alpha="0.2"
-                android:src="@drawable/ic_start_stop_button"
+                android:enabled="false"
                 android:scaleType="centerInside"
-                android:enabled="false" />
+                android:src="@drawable/ic_start_stop_button" />
 
         </LinearLayout>
 
@@ -90,9 +90,10 @@
                 android:enabled="false"
                 android:focusable="true"
                 android:gravity="center"
-                android:text="Connect"
+                android:text="@string/connect"
                 android:textColor="@color/disabled_text"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="visible" />
 
         </LinearLayout>
 
@@ -112,6 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="10dp"
+                android:alpha="0.2"
                 android:gravity="center"
                 android:text="--:--:--"
                 android:textColor="@color/white"
@@ -122,8 +124,9 @@
                 android:id="@+id/startTimerLabelText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:alpha="0.2"
                 android:gravity="center"
-                android:text="Automatic Pump Cycle Countdown"
+                android:text="@string/automatic_pump_cycle_countdown"
                 android:textColor="@color/white"
                 android:textSize="24sp" />
 
@@ -132,44 +135,62 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:alpha="0.2"
                 android:gravity="center"
-                android:visibility="gone"
-                android:text="Controls unlock after connection."
+                android:text="@string/controls_unlock_after_connection"
                 android:textColor="@color/text_muted"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/timerOverrideButton"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="48dp"
-                android:background="@drawable/bg_timer_window"
+                android:alpha="0.2"
                 android:enabled="false"
                 android:gravity="center"
                 android:text="@string/timer_override"
                 android:textColor="@color/white"
+                android:textSize="22sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pumpNowButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="12dp"
+                android:alpha="0.2"
+                android:background="@drawable/bg_timer_window"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="@string/pump_now"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/openDashboardButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="18dp"
+                android:alpha="0.2"
+                android:background="@drawable/bg_button_disabled"
+                android:clickable="true"
+                android:enabled="false"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/open_dashboard"
+                android:textColor="@color/disabled_text"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <include
                 android:id="@+id/connectBottomNav"
                 layout="@layout/include_bottom_nav_disconnected" />
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/openDashboardButton"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="18dp"
-            android:background="@drawable/bg_button_disabled"
-            android:clickable="true"
-            android:enabled="false"
-            android:focusable="true"
-            android:gravity="center"
-            android:visibility="gone"
-            android:text="@string/open_dashboard"
-            android:textColor="@color/disabled_text"
-            android:textStyle="bold" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ data class AlbersAppState(
     val deviceStatus: AlbersDeviceStatus = AlbersDeviceStatus(),
     val faultSummary: FaultSummary = FaultSummary(),
     val notifications: List<NotificationItem> = emptyList(),
+    val automaticPumpIntervalMinutes: Int = 90,
     val isLoading: Boolean = false,
     val lastErrorMessage: String? = null
 )

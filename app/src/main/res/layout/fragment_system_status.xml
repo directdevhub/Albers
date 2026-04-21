@@ -3,129 +3,87 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_screen_primary"
     android:fillViewport="true"
     tools:context=".ui.systemstatus.SystemStatusFragment">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="24dp"
+        android:gravity="center|top">
 
         <include
             android:id="@+id/systemStatusHeader"
             layout="@layout/include_albers_header" />
 
+        <ImageView
+            android:id="@+id/systemNominalIcon"
+            android:layout_width="124dp"
+            android:layout_height="124dp"
+            android:alpha="1"
+            android:src="@drawable/ic_system_icon"
+            android:scaleType="centerInside"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            app:layout_constraintTop_toBottomOf="@+id/systemStatusHeader"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
         <TextView
-            android:id="@+id/systemStatusTitleText"
+            android:id="@+id/systemSummaryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="System Status"
-            android:textColor="@color/text_primary"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:id="@+id/systemStatusTopActions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/backButton"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_button_secondary"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="Back"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/helpButton"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_button_secondary"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="Help"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/systemSummaryCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_card_rounded"
+            android:layout_marginTop="12dp"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="20dp">
-
-            <ImageView
-                android:id="@+id/systemNominalIcon"
-                android:layout_width="84dp"
-                android:layout_height="84dp"
-                android:contentDescription="System nominal"
-                android:src="@drawable/ic_system_status" />
-
-            <TextView
-                android:id="@+id/systemSummaryText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:gravity="center"
-                android:text="All monitored values are nominal"
-                android:textColor="@color/status_on"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
+            android:text="@string/all_monitored_values_are_nominal"
+            android:textColor="@color/status_on"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/systemNominalIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <LinearLayout
             android:id="@+id/pumpStatusGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="42dp"
+            app:layout_constraintTop_toBottomOf="@+id/systemSummaryText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <LinearLayout
                 android:id="@+id/pumpOneCard"
                 android:layout_width="0dp"
-                android:layout_height="160dp"
+                android:layout_height="180dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_card_rounded"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <ImageView
-                    android:id="@+id/pumpOneIcon"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:contentDescription="Pump 1"
-                    android:src="@drawable/ic_pump_1" />
-
                 <TextView
                     android:id="@+id/pumpOneTitleText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="52dp"
+                    android:enabled="false"
                     android:gravity="center"
-                    android:text="Pump 1"
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold" />
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:text="@string/pump_1" />
+
+                <ImageView
+                    android:id="@+id/pumpOneIcon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:contentDescription="Pump 1"
+                    android:src="@drawable/ic_pump" />
 
                 <TextView
                     android:id="@+id/pumpOneStateText"
@@ -133,6 +91,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Ready"
+                    android:textSize="18sp"
                     android:textColor="@color/status_on" />
 
             </LinearLayout>
@@ -140,30 +99,30 @@
             <LinearLayout
                 android:id="@+id/pumpTwoCard"
                 android:layout_width="0dp"
-                android:layout_height="160dp"
+                android:layout_height="180dp"
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_card_rounded"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <ImageView
-                    android:id="@+id/pumpTwoIcon"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:contentDescription="Pump 2"
-                    android:src="@drawable/ic_pump_2" />
-
                 <TextView
                     android:id="@+id/pumpTwoTitleText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="52dp"
+                    android:enabled="false"
                     android:gravity="center"
-                    android:text="Pump 2"
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold" />
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:text="@string/pump_2" />
+
+                <ImageView
+                    android:id="@+id/pumpTwoIcon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:contentDescription="Pump 2"
+                    android:src="@drawable/ic_pump" />
 
                 <TextView
                     android:id="@+id/pumpTwoStateText"
@@ -171,53 +130,69 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Ready"
+                    android:textSize="18sp"
                     android:textColor="@color/status_on" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/batteryStatusCard"
+        <ImageView
+            android:id="@+id/helpButton"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:alpha="1"
+            android:src="@drawable/ic_help"
+            android:scaleType="centerInside"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            app:layout_constraintTop_toBottomOf="@+id/settingsNavButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:alpha="1"
+            android:src="@drawable/ic_back"
+            android:scaleType="centerInside"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/batteryStatusValueText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_card_rounded"
-            android:orientation="horizontal"
-            android:padding="18dp">
+            android:layout_height="52dp"
+            android:layout_marginTop="24dp"
+            android:enabled="false"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:text="-"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/pumpStatusGrid"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-            <ImageView
-                android:id="@+id/batteryStatusIcon"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
-                android:contentDescription="Battery"
-                android:src="@drawable/ic_low_battery" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/batteryStatusTitleText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Battery"
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/batteryStatusValueText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="--% charge"
-                    android:textColor="@color/text_secondary" />
-
-            </LinearLayout>
-
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/settingsNavButton"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:alpha="1"
+            android:src="@drawable/ic_setting"
+            android:scaleType="centerInside"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@+id/batteryStatusValueText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <TextView
             android:id="@+id/pressureStatusText"
@@ -227,8 +202,12 @@
             android:background="@drawable/bg_warning_box"
             android:padding="16dp"
             android:text="Pressure and current warnings will appear here."
-            android:textColor="@color/text_secondary" />
+            android:textColor="@color/text_secondary"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/helpButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

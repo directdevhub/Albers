@@ -15,6 +15,7 @@ import com.albers.app.ui.connect.ConnectFragment
 import com.albers.app.ui.dashboard.DashboardFragment
 import com.albers.app.ui.help.HelpFragment
 import com.albers.app.ui.notifications.NotificationsFragment
+import com.albers.app.ui.privacy.PrivacyFragment
 import com.albers.app.ui.rinse.RinseFragment
 import com.albers.app.ui.settings.SettingsFragment
 import com.albers.app.ui.splash.SplashFragment
@@ -54,8 +55,8 @@ class MainActivity : AppCompatActivity() {
         replaceFragment(ConnectFragment.newInstance(), addToBackStack = false)
     }
 
-    fun showDashboard() {
-        replaceFragment(DashboardFragment.newInstance(), addToBackStack = true)
+    fun showDashboard(addToBackStack: Boolean = true) {
+        replaceFragment(DashboardFragment.newInstance(), addToBackStack = addToBackStack)
     }
 
     fun showSystemStatus() {
@@ -76,6 +77,10 @@ class MainActivity : AppCompatActivity() {
 
     fun showHelp() {
         replaceFragment(HelpFragment.newInstance(), addToBackStack = true)
+    }
+
+    fun showPrivacy() {
+        replaceFragment(PrivacyFragment.newInstance(), addToBackStack = true)
     }
 
     private fun replaceFragment(fragment: Fragment, addToBackStack: Boolean) {

@@ -24,7 +24,7 @@ class DashboardViewModel : ViewModel() {
                     DeviceConnectionState.Disconnected -> "OFF"
                 },
                 countdownText = status.elapsedTimeSeconds?.toCountdownText()
-                    ?: if (status.isPumping) "00:00:00" else "01:30:00",
+                    ?: if (status.isPumping) "00:00:00" else appState.automaticPumpIntervalMinutes.toIntervalText(),
                 pumpStatus = if (status.isPumping) "PUMPING" else "Pump status: Idle",
                 warningText = faultSummary.primaryMessage,
                 showWarning = faultSummary.highestSeverity != FaultSeverity.Nominal,
@@ -59,6 +59,12 @@ class DashboardViewModel : ViewModel() {
         val minutes = (this % 3600) / 60
         val seconds = this % 60
         return "%02d:%02d:%02d".format(hours, minutes, seconds)
+    }
+
+    private fun Int.toIntervalText(): String {
+        val hours = this / 60
+        val minutes = this % 60
+        return "%02d:%02d:%02d".format(hours, minutes, 0)
     }
 }
 

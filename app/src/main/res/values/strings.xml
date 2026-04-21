@@ -3,4 +3,19 @@
     <string name="turn_on_albers_ble_bal3_pair_with_pin_333333_if_needed_then_find_the_device_here">Turn on Albers_BLE_BAL3, pair with PIN 333333 if needed, then find the device here.</string>
     <string name="timer_override">Timer Override</string>
     <string name="open_dashboard">Open Dashboard</string>
+    <string name="automatic_pump_cycle_countdown">Automatic Pump Cycle Countdown</string>
+    <string name="connect">Connect</string>
+    <string name="controls_unlock_after_connection">Controls unlock after connection.</string>
+    <string name="pump_now">PUMP NOW</string>
+    <string name="all_monitored_values_are_nominal">All monitored values are nominal</string>
+    <string name="pump_1">Pump 1</string>
+    <string name="pump_2">Pump 2</string>
+    <string name="automatic_pump_cycle">Automatic Pump\n Cycle</string>
+    <string name="_60">60</string>
+    <string name="_90">90</string>
+    <string name="_120">120</string>
+    <string name="privacy_and_security">Privacy and security</string>
+    <string name="notifications">Notifications</string>
+    <string name="voice_control">Voice control</string>
+    <string name="privacy">Privacy</string>
 </resources>

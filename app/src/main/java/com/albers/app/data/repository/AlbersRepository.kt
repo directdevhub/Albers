@@ -111,6 +111,14 @@ object AlbersRepository {
         )
     }
 
+    fun updateAutomaticPumpInterval(minutes: Int) {
+        if (minutes !in SUPPORTED_PUMP_INTERVAL_MINUTES) {
+            setError("Unsupported automatic pump interval: $minutes minutes")
+            return
+        }
+        _appState.value = _appState.value.copy(automaticPumpIntervalMinutes = minutes)
+    }
+
     private fun applyStatus(status: AlbersDeviceStatus) {
         val summary = interpretFaults(status)
         Log.d(TAG, "Fault state changed: severity=${summary.highestSeverity}, states=${summary.states}")
@@ -283,4 +291,6 @@ object AlbersRepository {
         FaultState.CriticalBattery,
         FaultState.BatteryFailure
     )
+
+    private val SUPPORTED_PUMP_INTERVAL_MINUTES = setOf(60, 90, 120)
 }
