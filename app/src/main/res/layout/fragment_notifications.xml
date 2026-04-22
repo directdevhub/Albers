@@ -1,103 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_screen_primary"
-    android:fillViewport="true"
+    android:padding="@dimen/screen_padding"
     tools:context=".ui.notifications.NotificationsFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <include
+        android:id="@+id/notificationsHeader"
+        layout="@layout/include_albers_header" />
+
+    <TextView
+        android:id="@+id/notificationsTitleText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:layout_marginTop="@dimen/space_2xl"
+        android:text="@string/notifications"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/clearNotificationsButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notificationsHeader" />
 
-        <TextView
-            android:id="@+id/notificationsTitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_notification"
-            android:drawablePadding="12dp"
-            android:text="Notifications"
-            android:textColor="@color/text_primary"
-            android:textSize="26sp"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/clearNotificationsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/control_height_small"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="@string/clear_notification"
+        android:textColor="@color/status_error"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@id/notificationsTitleText"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
-            android:id="@+id/backButton"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="18dp"
-            android:background="@drawable/bg_button_secondary"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="Back"
-            android:textColor="@color/text_primary"
-            android:textStyle="bold" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notificationsRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/space_xl"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingBottom="@dimen/notification_bottom_padding"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/backButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notificationsTitleText"
+        tools:listitem="@layout/item_notifications" />
 
-        <LinearLayout
-            android:id="@+id/notificationListContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <TextView
+        android:id="@+id/emptyNotificationsText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/no_notification_history_yet"
+        android:textColor="@color/text_secondary"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/backButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notificationsTitleText"
+        tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/latestWarningText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/bg_warning_box"
-            android:drawableStart="@drawable/ic_hazard_warning"
-            android:drawablePadding="12dp"
-            android:padding="16dp"
-            android:text="No active warnings."
-            android:textColor="@color/text_primary"
-            android:textStyle="bold" />
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="@dimen/icon_action"
+        android:layout_height="@dimen/icon_action"
+        android:alpha="1"
+        android:clickable="true"
+        android:enabled="true"
+        android:focusable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
-            android:id="@+id/activityHistoryTitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
-            android:text="Activity history"
-            android:textColor="@color/text_primary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/historyItemOneText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card_rounded"
-            android:padding="16dp"
-            android:text="Pump cycle completed • waiting for device data"
-            android:textColor="@color/text_secondary" />
-
-        <TextView
-            android:id="@+id/historyItemTwoText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card_rounded"
-            android:padding="16dp"
-            android:text="BLE connection events will appear here"
-            android:textColor="@color/text_secondary" />
-
-        <TextView
-            android:id="@+id/historyItemThreeText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card_rounded"
-            android:padding="16dp"
-            android:text="Battery and pump warnings will be logged"
-            android:textColor="@color/text_secondary" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

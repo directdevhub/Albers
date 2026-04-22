@@ -18,4 +18,96 @@
     <string name="notifications">Notifications</string>
     <string name="voice_control">Voice control</string>
     <string name="privacy">Privacy</string>
+    <string name="help">Help</string>
+    <string name="connection_turn_on_albers_ble_bal3_pair_with_pin_333333_then_tap_find_albers_device">Connection: turn on Albers_BLE_BAL3, pair with PIN 333333, then tap Find ALBERS Device.</string>
+    <string name="battery_warnings_appear_when_charge_or_power_state_requires_attention">Battery: warnings appear when charge or power state requires attention.</string>
+    <string name="pump_pump_now_starts_an_immediate_cycle_stop_cancels_active_pumping">Pump: PUMP NOW starts an immediate cycle. STOP cancels active pumping.</string>
+    <string name="troubleshooting_guidance_for_albers_connection_battery_pump_and_rinse_actions">Troubleshooting guidance for ALBERS connection, battery, pump, and rinse actions.</string>
+    <string name="privacy_and_security_device_data_is_intended_for_local_monitoring_and_diagnostics">Privacy and security: device data is intended for local monitoring and diagnostics.</string>
+
+
+        <string name="privacy_title">Privacy Policy</string>
+
+        <string name="privacy_effective_date_label">Effective Date:</string>
+        <string name="privacy_effective_date_value">[Add Date]</string>
+
+        <string name="privacy_intro">
+        The ALBERS App (“we”, “our”, or “the app”) is designed to connect with the ALBERS hardware device via Bluetooth Low Energy (BLE) to monitor and control system operations. Your privacy is important to us, and this policy explains how we handle your information.
+    </string>
+
+        <string name="privacy_section_1_title">1. Information We Collect</string>
+        <string name="privacy_section_1_body">
+        The ALBERS App does not collect personal data such as name, email address, phone number, or location, except where Android may require permission for BLE scanning.
+    </string>
+        <string name="privacy_section_1_body_2">
+        However, the app may access and process device-related data from the ALBERS hardware, including battery level, pump status, system status and diagnostics, sensor values such as pressure and current, and operational states such as pumping or idle.
+    </string>
+        <string name="privacy_section_1_body_3">
+        This data is used only for displaying system information, controlling the hardware device, and diagnosing issues.
+    </string>
+
+        <string name="privacy_section_2_title">2. Bluetooth and Permissions</string>
+        <string name="privacy_section_2_body">
+        The app uses Bluetooth Low Energy (BLE) to communicate with the ALBERS device.
+    </string>
+        <string name="privacy_section_2_body_2">
+        To function correctly, the app may request Bluetooth permissions, nearby device permissions, and location permission where required by Android for BLE scanning.
+    </string>
+        <string name="privacy_section_2_body_3">
+        We do not track your location. Location-related permission is only required by the Android operating system for BLE functionality.
+    </string>
+
+        <string name="privacy_section_3_title">3. Data Storage</string>
+        <string name="privacy_section_3_body">
+        The app does not store personal data on external servers. All data is processed locally on your device.
+    </string>
+        <string name="privacy_section_3_body_2">
+        Temporary data may be stored on your device only as needed for app functionality, such as connection state or logs.
+    </string>
+
+        <string name="privacy_section_4_title">4. Data Sharing</string>
+        <string name="privacy_section_4_body">
+        We do not share, sell, or transmit user data to third parties.
+    </string>
+        <string name="privacy_section_4_body_2">
+        Data from the ALBERS device remains within the app and on your device.
+    </string>
+
+        <string name="privacy_section_5_title">5. Security</string>
+        <string name="privacy_section_5_body">
+        We take reasonable measures to protect data. BLE communication follows standard Bluetooth security practices. Access to device data may require authentication such as a passkey or password. No sensitive personal data is stored by the app.
+    </string>
+
+        <string name="privacy_section_6_title">6. Medical Disclaimer</string>
+        <string name="privacy_section_6_body">
+        The ALBERS App is a device control and monitoring tool. It does not provide medical advice and does not diagnose or treat medical conditions.
+    </string>
+        <string name="privacy_section_6_body_2">
+        Users should follow instructions provided by healthcare professionals when using the associated hardware.
+    </string>
+
+        <string name="privacy_section_7_title">7. User Responsibility</string>
+        <string name="privacy_section_7_body">
+        Users are responsible for ensuring correct use of the ALBERS hardware, maintaining secure access to their device, and verifying system alerts and notifications.
+    </string>
+
+        <string name="privacy_section_8_title">8. Changes to This Policy</string>
+        <string name="privacy_section_8_body">
+        We may update this Privacy Policy from time to time. Any changes will be reflected within the app or official distribution channels.
+    </string>
+
+        <string name="privacy_section_9_title">9. Contact</string>
+        <string name="privacy_section_9_body">
+        For questions or concerns regarding this Privacy Policy, please contact:
+    </string>
+        <string name="privacy_contact_name">[Your Company / Team Name]</string>
+        <string name="privacy_contact_email">[Email Address]</string>
+
+        <string name="privacy_short_summary">
+        ALBERS does not collect personal data. The app uses Bluetooth to connect to a hardware device and display system status. No user data is stored or shared externally.
+    </string>
+    <string name="rinse_sanitize_cycle">Rinse/Sanitize Cycle</string>
+    <string name="clear_notification">Clear Notification</string>
+    <string name="no_notification_history_yet">No notification history yet</string>
+    <string name="notification_details">Notification details</string>
 </resources>

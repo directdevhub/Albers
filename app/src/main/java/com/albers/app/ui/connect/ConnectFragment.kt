@@ -2,6 +2,8 @@ package com.albers.app.ui.connect
 
 import android.Manifest
 import android.content.Context
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
@@ -135,7 +137,13 @@ class ConnectFragment : Fragment() {
 
         val enabledTextColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
         val disabledTextColor = ContextCompat.getColor(requireContext(), R.color.disabled_text)
-        binding.connectButton.setTextColor(if (binding.connectButton.isEnabled) enabledTextColor else disabledTextColor)
+        binding.connectButton.setTextColor(if (binding.connectButton.isEnabled) {
+            binding.connectButton.visibility = View.VISIBLE
+            enabledTextColor
+        } else {
+            binding.connectButton.visibility = View.GONE
+            disabledTextColor
+        })
 
         binding.connectBottomNav.systemStatusNavButton.isEnabled = false
         binding.connectBottomNav.settingsNavButton.isEnabled = false
@@ -145,6 +153,14 @@ class ConnectFragment : Fragment() {
         binding.connectBottomNav.settingsNavButton.alpha = DISABLED_ALPHA
         binding.connectBottomNav.rinseNavButton.alpha = DISABLED_ALPHA
         binding.connectBottomNav.helpNavButton.alpha = ENABLED_ALPHA
+        binding.connectBottomNav.systemStatusNavButton.colorFilter = disabledIconFilter()
+        binding.connectBottomNav.settingsNavButton.colorFilter = disabledIconFilter()
+        binding.connectBottomNav.rinseNavButton.colorFilter = disabledIconFilter()
+        binding.connectBottomNav.helpNavButton.clearColorFilter()
+    }
+
+    private fun disabledIconFilter(): ColorMatrixColorFilter {
+        return ColorMatrixColorFilter(ColorMatrix().apply { setSaturation(0f) })
     }
 
     private fun observeConnectState() {

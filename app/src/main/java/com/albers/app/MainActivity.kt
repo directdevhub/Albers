@@ -10,11 +10,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.albers.app.ble.AlbersBleSession
+import com.albers.app.data.repository.NotificationStore
 import com.albers.app.databinding.ActivityMainBinding
 import com.albers.app.ui.connect.ConnectFragment
 import com.albers.app.ui.dashboard.DashboardFragment
 import com.albers.app.ui.help.HelpFragment
 import com.albers.app.ui.notifications.NotificationsFragment
+import com.albers.app.ui.notifications.NotificationDetailFragment
 import com.albers.app.ui.privacy.PrivacyFragment
 import com.albers.app.ui.rinse.RinseFragment
 import com.albers.app.ui.settings.SettingsFragment
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        NotificationStore.initialize(applicationContext)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -73,6 +76,10 @@ class MainActivity : AppCompatActivity() {
 
     fun showNotifications() {
         replaceFragment(NotificationsFragment.newInstance(), addToBackStack = true)
+    }
+
+    fun showNotificationDetail(notificationId: Long) {
+        replaceFragment(NotificationDetailFragment.newInstance(notificationId), addToBackStack = true)
     }
 
     fun showHelp() {

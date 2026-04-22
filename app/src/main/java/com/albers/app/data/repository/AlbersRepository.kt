@@ -119,6 +119,11 @@ object AlbersRepository {
         _appState.value = _appState.value.copy(automaticPumpIntervalMinutes = minutes)
     }
 
+    fun clearNotifications() {
+        NotificationStore.clear()
+        _appState.value = _appState.value.copy(notifications = emptyList())
+    }
+
     private fun applyStatus(status: AlbersDeviceStatus) {
         val summary = interpretFaults(status)
         Log.d(TAG, "Fault state changed: severity=${summary.highestSeverity}, states=${summary.states}")
@@ -236,6 +241,7 @@ object AlbersRepository {
     }
 
     private fun addNotification(item: NotificationItem) {
+        NotificationStore.save(item)
         val notifications = (_appState.value.notifications + item)
             .sortedByDescending { it.createdAtMillis }
             .take(50)

@@ -13,6 +13,7 @@
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#C7D0D9</color>
     <color name="text_muted">#8C98A5</color>
+    <color name="text_notification_details">#CCFFFFFF</color>
 
     <!-- Brand / Accent -->
     <color name="accent_blue">#4A90E2</color>

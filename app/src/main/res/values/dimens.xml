@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_padding">24dp</dimen>
+    <dimen name="screen_min_height">720dp</dimen>
+
+    <dimen name="space_2xs">6dp</dimen>
+    <dimen name="line_spacing_body">4dp</dimen>
+    <dimen name="space_xs">8dp</dimen>
+    <dimen name="space_sm">10dp</dimen>
+    <dimen name="space_md">12dp</dimen>
+    <dimen name="space_card_gap">14dp</dimen>
+    <dimen name="space_lg">16dp</dimen>
+    <dimen name="space_xl">18dp</dimen>
+    <dimen name="space_2xl">20dp</dimen>
+    <dimen name="space_section">24dp</dimen>
+    <dimen name="space_3xl">28dp</dimen>
+    <dimen name="space_4xl">32dp</dimen>
+    <dimen name="space_power_gap">40dp</dimen>
+    <dimen name="space_control_gap">48dp</dimen>
+    <dimen name="space_large_title">80dp</dimen>
+
+    <dimen name="content_padding">16dp</dimen>
+    <dimen name="card_padding">18dp</dimen>
+    <dimen name="drawable_text_gap">12dp</dimen>
+
+    <dimen name="control_height_small">48dp</dimen>
+    <dimen name="control_height">52dp</dimen>
+    <dimen name="control_height_large">56dp</dimen>
+    <dimen name="control_height_xlarge">64dp</dimen>
+
+    <dimen name="icon_setting">64dp</dimen>
+    <dimen name="icon_interval">72dp</dimen>
+    <dimen name="icon_power">80dp</dimen>
+    <dimen name="icon_action">84dp</dimen>
+    <dimen name="icon_primary_action">102dp</dimen>
+    <dimen name="icon_status">124dp</dimen>
+    <dimen name="splash_logo_size">160dp</dimen>
+
+    <dimen name="notification_bottom_padding">108dp</dimen>
+</resources>

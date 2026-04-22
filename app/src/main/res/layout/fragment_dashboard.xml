@@ -11,9 +11,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="720dp"
+        android:minHeight="@dimen/screen_min_height"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="@dimen/screen_padding">
 
         <include
             android:id="@+id/startHeader"
@@ -23,16 +23,16 @@
             android:id="@+id/startPowerRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/space_md"
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@+id/startHeader">
 
             <ImageView
                 android:id="@+id/deviceStateText"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginEnd="40dp"
+                android:layout_width="@dimen/icon_power"
+                android:layout_height="@dimen/icon_power"
+                android:layout_marginEnd="@dimen/space_power_gap"
                 android:alpha="0.2"
                 android:src="@drawable/ic_scan_button"
                 android:scaleType="centerInside"
@@ -40,9 +40,9 @@
 
             <ImageView
                 android:id="@+id/stopButton"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginStart="40dp"
+                android:layout_width="@dimen/icon_power"
+                android:layout_height="@dimen/icon_power"
+                android:layout_marginStart="@dimen/space_power_gap"
                 android:alpha="0.2"
                 android:src="@drawable/ic_start_stop_button"
                 android:scaleType="centerInside"
@@ -54,17 +54,17 @@
             android:id="@+id/controlPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="@dimen/space_3xl"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="18dp"
+            android:padding="@dimen/card_padding"
             app:layout_constraintTop_toBottomOf="@+id/startPowerRow">
 
             <TextView
                 android:id="@+id/timerText"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="@dimen/control_height_xlarge"
+                android:layout_marginTop="@dimen/space_sm"
                 android:gravity="center"
                 android:text="--:--:--"
                 android:textColor="@color/white"
@@ -83,8 +83,8 @@
             <TextView
                 android:id="@+id/timerOverrideButton"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="48dp"
+                android:layout_height="@dimen/control_height"
+                android:layout_marginTop="@dimen/space_control_gap"
                 android:enabled="false"
                 android:gravity="center"
                 android:textSize="22sp"
@@ -95,8 +95,8 @@
             <TextView
                 android:id="@+id/pumpNowButton"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="12dp"
+                android:layout_height="@dimen/control_height"
+                android:layout_marginTop="@dimen/space_md"
                 android:background="@drawable/bg_timer_window"
                 android:enabled="false"
                 android:gravity="center"

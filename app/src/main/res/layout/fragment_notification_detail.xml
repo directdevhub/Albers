@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_screen_primary"
+    android:fillViewport="true"
+    tools:context=".ui.notifications.NotificationDetailFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="720dp"
+        android:padding="24dp">
+
+        <include
+            android:id="@+id/notificationDetailHeader"
+            layout="@layout/include_albers_header" />
+
+        <ImageView
+            android:id="@+id/notificationIcon"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:layout_marginTop="36dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_notification_success"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/notificationDetailHeader" />
+
+        <TextView
+            android:id="@+id/notificationTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/notificationIcon"
+            tools:text="Pump cycle completed" />
+
+        <TextView
+            android:id="@+id/notificationTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textColor="@color/text_muted"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/notificationTitle"
+            tools:text="Apr 23, 2026 11:15 AM" />
+
+        <TextView
+            android:id="@+id/notificationDetails"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/bg_timer_window"
+            android:gravity="center"
+            android:padding="20dp"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/notificationTime"
+            tools:text="The latest pump cycle completed." />
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:layout_marginTop="32dp"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/notificationDetails" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

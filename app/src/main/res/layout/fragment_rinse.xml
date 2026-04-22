@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,144 +8,175 @@
     android:fillViewport="true"
     tools:context=".ui.rinse.RinseFragment">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="720dp"
+        android:gravity="center|top"
+        android:minHeight="@dimen/screen_min_height"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="@dimen/screen_padding">
 
         <include
-            android:id="@+id/rinseHeader"
+            android:id="@+id/systemStatusHeader"
             layout="@layout/include_albers_header" />
 
-        <LinearLayout
-            android:id="@+id/rinseTopActions"
+        <ImageView
+            android:id="@+id/settingImg"
+            android:layout_width="@dimen/icon_setting"
+            android:layout_height="@dimen/icon_setting"
+            android:alpha="1"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_rinse_sanitize_indicator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/systemStatusHeader" />
+
+        <TextView
+            android:id="@+id/pumpIntervalTitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/backButton"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_button_secondary"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="Back"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/helpButton"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_button_secondary"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="Help"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
-
-        </LinearLayout>
+            android:layout_marginTop="@dimen/space_md"
+            android:gravity="center"
+            android:text="@string/rinse_sanitize_cycle"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/settingImg" />
 
         <LinearLayout
             android:id="@+id/rinseActionCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:background="@drawable/bg_card_rounded"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:layout_marginTop="@dimen/space_lg"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pumpIntervalTitleText">
 
-            <ImageView
-                android:id="@+id/rinseIcon"
-                android:layout_width="92dp"
-                android:layout_height="92dp"
-                android:contentDescription="Rinse sanitize"
-                android:src="@drawable/ic_rinse_sanitize" />
-
-            <TextView
-                android:id="@+id/rinseTitleText"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:text="Rinse / Sanitize"
-                android:textColor="@color/text_primary"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
 
-            <TextView
-                android:id="@+id/rinseTimerText"
-                android:layout_width="match_parent"
-                android:layout_height="74dp"
-                android:layout_marginTop="18dp"
-                android:background="@drawable/bg_timer_window"
-                android:gravity="center"
-                android:text="00:60"
-                android:textColor="@color/text_primary"
-                android:textSize="36sp"
-                android:textStyle="bold" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/pumpIntervalOptions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_card_gap"
+                    android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/startRinseButton"
-                android:layout_width="match_parent"
-                android:layout_height="58dp"
-                android:layout_marginTop="22dp"
-                android:background="@drawable/bg_button_green"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="START CLEANING CYCLE"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/startRinseButton"
+                        android:layout_width="@dimen/icon_primary_action"
+                        android:layout_height="@dimen/icon_primary_action"
+                        android:layout_marginStart="@dimen/space_md"
+                        android:src="@drawable/ic_start_rinse"
+                        android:scaleType="centerInside"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/emergencyStopRinseButton"
-                android:layout_width="match_parent"
-                android:layout_height="58dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_button_red"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="EMERGENCY STOP"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/emergencyStopRinseButton"
+                        android:layout_width="@dimen/icon_action"
+                        android:layout_height="@dimen/icon_action"
+                        android:src="@drawable/ic_emergency_stop_rinse"
+                        android:scaleType="centerInside"
+                        android:layout_marginTop="@dimen/space_lg"
+                        app:layout_constraintTop_toBottomOf="@+id/rinseTimerText"
+                        app:layout_constraintEnd_toEndOf="@+id/rinseTimerText"/>
+
+                    <ImageView
+                        android:id="@+id/rinseTimerText"
+                        android:layout_width="@dimen/icon_action"
+                        android:layout_height="@dimen/icon_action"
+                        android:src="@drawable/ic_rinse_timer"
+                        android:scaleType="centerInside"
+                        android:layout_marginEnd="@dimen/space_md"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/startRinseButton"
+                        app:layout_constraintTop_toTopOf="@+id/startRinseButton" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <TextView
+                    android:id="@+id/rinseAvailabilityText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xl"
+                    android:background="@drawable/bg_warning_box"
+                    android:padding="@dimen/content_padding"
+                    android:text="Rinse/Sanitize is disabled if both pumps are unavailable."
+                    android:textColor="@color/text_secondary" />
+            </LinearLayout>
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/rinseAvailabilityText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:background="@drawable/bg_warning_box"
-            android:padding="16dp"
-            android:text="Rinse/Sanitize is disabled if both pumps are unavailable."
-            android:textColor="@color/text_secondary" />
-
-        <TextView
-            android:id="@+id/systemStatusButton"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_button_secondary"
+        <ImageView
+            android:id="@+id/systemNominalIcon"
+            android:layout_width="@dimen/icon_status"
+            android:layout_height="@dimen/icon_status"
+            android:alpha="1"
             android:clickable="true"
+            android:enabled="true"
             android:focusable="true"
-            android:gravity="center"
-            android:text="System Status"
-            android:textColor="@color/text_primary"
-            android:textStyle="bold" />
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_system_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/settingsNavButton"
+            app:layout_constraintTop_toTopOf="@+id/settingsNavButton" />
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/settingsNavButton"
+            android:layout_width="@dimen/icon_action"
+            android:layout_height="@dimen/icon_action"
+            android:alpha="1"
+            android:src="@drawable/ic_setting"
+            android:scaleType="centerInside"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:layout_marginTop="@dimen/space_4xl"
+            app:layout_constraintTop_toBottomOf="@+id/rinseActionCard"
+            app:layout_constraintBottom_toTopOf="@+id/helpButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <ImageView
+            android:id="@+id/helpButton"
+            android:layout_width="@dimen/icon_action"
+            android:layout_height="@dimen/icon_action"
+            android:alpha="1"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_help"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/backButton"
+            app:layout_constraintBottom_toBottomOf="@+id/backButton" />
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="@dimen/icon_action"
+            android:layout_height="@dimen/icon_action"
+            android:alpha="1"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

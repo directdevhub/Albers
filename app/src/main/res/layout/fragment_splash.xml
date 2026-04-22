@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_screen_primary"
-    android:padding="24dp"
+    android:padding="@dimen/screen_padding"
     tools:context=".ui.splash.SplashFragment">
 
     <ImageView
         android:id="@+id/splashLogoImage"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="@dimen/splash_logo_size"
+        android:layout_height="@dimen/splash_logo_size"
         android:contentDescription="@string/app_name"
         android:src="@drawable/ic_icon"
         app:layout_constraintBottom_toBottomOf="parent"

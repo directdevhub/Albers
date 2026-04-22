@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.albers.app.MainActivity
 import com.albers.app.R
 import com.albers.app.databinding.FragmentRinseBinding
+import com.albers.app.viewmodel.RinseStatusIcon
 import com.albers.app.viewmodel.RinseViewModel
 import kotlinx.coroutines.launch
 
@@ -34,7 +35,8 @@ class RinseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.backButton.setOnClickListener { parentFragmentManager.popBackStack() }
         binding.helpButton.setOnClickListener { (requireActivity() as MainActivity).showHelp() }
-        binding.systemStatusButton.setOnClickListener { (requireActivity() as MainActivity).showSystemStatus() }
+        binding.systemNominalIcon.setOnClickListener { (requireActivity() as MainActivity).showSystemStatus() }
+        binding.settingsNavButton.setOnClickListener { (requireActivity() as MainActivity).showSettings() }
         binding.startRinseButton.setOnClickListener { viewModel.startRinseCycle() }
         binding.emergencyStopRinseButton.setOnClickListener { viewModel.emergencyStop() }
 
@@ -43,12 +45,10 @@ class RinseFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     binding.startRinseButton.isEnabled = state.canStart
                     binding.emergencyStopRinseButton.isEnabled = state.canStart
-                    binding.startRinseButton.setBackgroundResource(
-                        if (state.canStart) R.drawable.bg_button_green else R.drawable.bg_button_disabled
-                    )
-                    binding.emergencyStopRinseButton.setBackgroundResource(
-                        if (state.canStart) R.drawable.bg_button_red else R.drawable.bg_button_disabled
-                    )
+                    binding.startRinseButton.alpha = if (state.canStart) ENABLED_ALPHA else DISABLED_ALPHA
+                    binding.emergencyStopRinseButton.alpha = if (state.canStart) ENABLED_ALPHA else DISABLED_ALPHA
+                    binding.rinseTimerText.alpha = if (state.canStart) ENABLED_ALPHA else DISABLED_ALPHA
+                    binding.systemNominalIcon.setImageResource(state.statusIcon.toDrawableRes())
                     binding.rinseAvailabilityText.text = state.availabilityMessage
                 }
             }
@@ -61,6 +61,18 @@ class RinseFragment : Fragment() {
     }
 
     companion object {
+        private const val ENABLED_ALPHA = 1f
+        private const val DISABLED_ALPHA = 0.2f
+
         fun newInstance(): RinseFragment = RinseFragment()
+    }
+}
+
+private fun RinseStatusIcon.toDrawableRes(): Int {
+    return when (this) {
+        RinseStatusIcon.Nominal -> R.drawable.ic_system_icon
+        RinseStatusIcon.LowBattery -> R.drawable.ic_low_battery
+        RinseStatusIcon.EmergencyBattery -> R.drawable.ic_emgency_battery
+        RinseStatusIcon.PumpError -> R.drawable.ic_pump_error
     }
 }
