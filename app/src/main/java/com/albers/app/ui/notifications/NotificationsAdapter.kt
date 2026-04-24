@@ -105,6 +105,7 @@ fun NotificationType.toIconRes(): Int {
 
         NotificationType.PumpError,
         NotificationType.ConnectionLost,
+        NotificationType.OfflineDiagnostic,
         NotificationType.UnknownFault -> R.drawable.ic_notification_error
     }
 }

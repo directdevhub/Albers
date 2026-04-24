@@ -23,7 +23,7 @@
     <color name="status_on">#27C46B</color>
     <color name="status_off">#7B8794</color>
     <color name="status_warning">#F5A623</color>
-    <color name="status_error">#FF4D4F</color>
+    <color name="status_error">#FF0003</color>
     <color name="status_danger">#D9363E</color>
 
     <!-- Pump / Action -->

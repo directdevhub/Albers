@@ -41,7 +41,7 @@
             android:text="@string/help"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="28sp"
+            android:textSize="@dimen/text_title_xl"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +55,7 @@
             android:gravity="center"
             android:text="@string/troubleshooting_guidance_for_albers_connection_battery_pump_and_rinse_actions"
             android:textColor="@color/text_secondary"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_body"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/helpTitleText" />
@@ -79,7 +79,7 @@
                 android:padding="@dimen/card_padding"
                 android:text="@string/connection_turn_on_albers_ble_bal3_pair_with_pin_333333_then_tap_find_albers_device"
                 android:textColor="@color/text_primary"
-                android:textSize="18sp" />
+                android:textSize="@dimen/text_heading" />
 
             <TextView
                 android:id="@+id/helpPumpCard"
@@ -91,7 +91,7 @@
                 android:padding="@dimen/card_padding"
                 android:text="@string/pump_pump_now_starts_an_immediate_cycle_stop_cancels_active_pumping"
                 android:textColor="@color/text_primary"
-                android:textSize="18sp" />
+                android:textSize="@dimen/text_heading" />
 
             <TextView
                 android:id="@+id/helpBatteryCard"
@@ -103,7 +103,7 @@
                 android:padding="@dimen/card_padding"
                 android:text="@string/battery_warnings_appear_when_charge_or_power_state_requires_attention"
                 android:textColor="@color/text_primary"
-                android:textSize="18sp" />
+                android:textSize="@dimen/text_heading" />
 
             <TextView
                 android:id="@+id/helpPrivacyCard"
@@ -115,7 +115,7 @@
                 android:padding="@dimen/card_padding"
                 android:text="@string/privacy_and_security_device_data_is_intended_for_local_monitoring_and_diagnostics"
                 android:textColor="@color/text_primary"
-                android:textSize="18sp" />
+                android:textSize="@dimen/text_heading" />
 
         </LinearLayout>
 

@@ -24,6 +24,8 @@ sealed class FaultState {
     data object EmergencyBatteryActive : FaultState()
     data object ConnectionLost : FaultState()
     data object Reconnecting : FaultState()
+    data object AuthenticationRequired : FaultState()
+    data object ConnectionFailure : FaultState()
     data object BatteryFailure : FaultState()
     data object UnknownFault : FaultState()
 }

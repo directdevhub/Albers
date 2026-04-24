@@ -10,9 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.albers.app.MainActivity
-import com.albers.app.R
 import com.albers.app.databinding.FragmentRinseBinding
-import com.albers.app.viewmodel.RinseStatusIcon
+import com.albers.app.ui.common.toDrawableRes
 import com.albers.app.viewmodel.RinseViewModel
 import kotlinx.coroutines.launch
 
@@ -44,11 +43,13 @@ class RinseFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.startRinseButton.isEnabled = state.canStart
-                    binding.emergencyStopRinseButton.isEnabled = state.canStart
+                    binding.emergencyStopRinseButton.isEnabled = state.canEmergencyStop
                     binding.startRinseButton.alpha = if (state.canStart) ENABLED_ALPHA else DISABLED_ALPHA
-                    binding.emergencyStopRinseButton.alpha = if (state.canStart) ENABLED_ALPHA else DISABLED_ALPHA
-                    binding.rinseTimerText.alpha = if (state.canStart) ENABLED_ALPHA else DISABLED_ALPHA
-                    binding.systemNominalIcon.setImageResource(state.statusIcon.toDrawableRes())
+                    binding.emergencyStopRinseButton.alpha = if (state.canEmergencyStop) ENABLED_ALPHA else DISABLED_ALPHA
+                    binding.rinseTimerText.alpha = if (state.canStart || state.isRunning) ENABLED_ALPHA else DISABLED_ALPHA
+                    binding.rinseCountdownText.text = state.countdownText
+                    binding.rinseCountdownText.alpha = binding.rinseTimerText.alpha
+                    binding.systemNominalIcon.setImageResource(state.statusBadge.toDrawableRes())
                     binding.rinseAvailabilityText.text = state.availabilityMessage
                 }
             }
@@ -65,14 +66,5 @@ class RinseFragment : Fragment() {
         private const val DISABLED_ALPHA = 0.2f
 
         fun newInstance(): RinseFragment = RinseFragment()
-    }
-}
-
-private fun RinseStatusIcon.toDrawableRes(): Int {
-    return when (this) {
-        RinseStatusIcon.Nominal -> R.drawable.ic_system_icon
-        RinseStatusIcon.LowBattery -> R.drawable.ic_low_battery
-        RinseStatusIcon.EmergencyBattery -> R.drawable.ic_emgency_battery
-        RinseStatusIcon.PumpError -> R.drawable.ic_pump_error
     }
 }

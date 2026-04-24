@@ -35,7 +35,7 @@ class AlbersBleManager(
         onConnectionStateChanged = ::handleConnectionStateChanged,
         onServicesDiscovered = ::handleServicesDiscovered,
         onCharacteristicRead = ::handleCharacteristicRead,
-        onCharacteristicWrite = callback::onCharacteristicWrite,
+        onCharacteristicWrite = ::handleCharacteristicWrite,
         onError = ::handleGattError
     )
 
@@ -48,10 +48,14 @@ class AlbersBleManager(
     private var lastConnectionFailureMessage: String? = null
     private var suppressNextReconnect = false
     private var bondReceiverRegistered = false
+    private var pendingReconnectRunnable: Runnable? = null
     private val pendingReadShortUuids = ArrayDeque<Int>()
+    private val pendingWrites = ArrayDeque<PendingWrite>()
     private val readRetryCounts = mutableMapOf<Int, Int>()
     private var readInProgress = false
+    private var writeInProgress = false
     private var currentReadShortUuid: Int? = null
+    private var currentWriteShortUuid: Int? = null
     private var protectedReadReconnectAttempts = 0
 
     private val bondStateReceiver = object : BroadcastReceiver() {
@@ -180,6 +184,7 @@ class AlbersBleManager(
     @SuppressLint("MissingPermission")
     fun connect(device: BluetoothDevice) {
         stopScan()
+        cancelPendingReconnect()
         closeGatt()
 
         currentDevice = device
@@ -189,13 +194,14 @@ class AlbersBleManager(
         protectedReadReconnectAttempts = 0
         suppressNextReconnect = false
         Log.d(TAG, "Connecting to device: address=${device.address}")
-        connectWhenBonded(device)
+        mainHandler.postDelayed({ connectWhenBonded(device) }, GATT_OPEN_AFTER_CLOSE_DELAY_MS)
     }
 
     @SuppressLint("MissingPermission")
     fun disconnect() {
         Log.d(TAG, "Disconnect requested")
         userRequestedDisconnect = true
+        cancelPendingReconnect()
         reconnectAttempts = 0
         lastConnectionFailureMessage = null
         pendingBondDevice = null
@@ -217,24 +223,47 @@ class AlbersBleManager(
             return
         }
 
-        Log.d(TAG, "Reading characteristic: $characteristicUuid")
-        val started = bluetoothGatt?.readCharacteristic(characteristic) == true
-        if (!started) {
-            callback.onError("Unable to start characteristic read: $characteristicUuid")
+        val shortUuid = characteristic.uuid.shortUuidOrNull()
+        if (shortUuid != null) {
+            queueCharacteristicReads(listOf(shortUuid))
+            return
         }
+
+        Log.d(TAG, "Reading characteristic directly: $characteristicUuid")
+        val gatt = bluetoothGatt ?: run {
+            callback.onError("Bluetooth GATT is unavailable")
+            return
+        }
+        startRead(gatt, characteristic)
     }
 
     @SuppressLint("MissingPermission")
     fun readCharacteristic(shortUuid: Int) {
-        val gatt = bluetoothGatt
-        val characteristic = gatt?.findCharacteristic(shortUuid)
+        queueCharacteristicReads(listOf(shortUuid))
+    }
 
-        if (gatt == null || characteristic == null) {
-            callback.onError("Characteristic not found: 0x${shortUuid.toHexShort()}")
+    fun queueCharacteristicReads(shortUuids: Collection<Int>) {
+        val gatt = bluetoothGatt
+        if (gatt == null) {
+            callback.onError("Bluetooth GATT is unavailable")
             return
         }
 
-        readCharacteristic(gatt, characteristic)
+        shortUuids.forEach { shortUuid ->
+            if (gatt.findCharacteristic(shortUuid) == null) {
+                Log.w(TAG, "Read skipped. Characteristic not found: 0x${shortUuid.toHexShort()}")
+                return@forEach
+            }
+            if (shortUuid == currentReadShortUuid || shortUuid in pendingReadShortUuids) {
+                return@forEach
+            }
+            pendingReadShortUuids.add(shortUuid)
+        }
+        processNextOperation()
+    }
+
+    fun hasCharacteristic(shortUuid: Int): Boolean {
+        return bluetoothGatt?.findCharacteristic(shortUuid) != null
     }
 
     @SuppressLint("MissingPermission", "ObsoleteSdkInt", "DEPRECATION")
@@ -249,22 +278,13 @@ class AlbersBleManager(
             return
         }
 
-        Log.d(TAG, "Writing ${payload.size} bytes to characteristic: $characteristicUuid")
-        val status = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            gatt.writeCharacteristic(
-                characteristic,
-                payload,
-                BluetoothGattCharacteristicWriteType.DEFAULT
-            )
-        } else {
-            characteristic.writeType = BluetoothGattCharacteristicWriteType.DEFAULT
-            characteristic.value = payload
-            if (gatt.writeCharacteristic(characteristic)) BluetoothGatt.GATT_SUCCESS else BluetoothGatt.GATT_FAILURE
+        val shortUuid = characteristic.uuid.shortUuidOrNull()
+        if (shortUuid != null) {
+            writeCharacteristic(shortUuid, payload)
+            return
         }
 
-        if (status != BluetoothGatt.GATT_SUCCESS) {
-            callback.onError("Unable to start characteristic write: $characteristicUuid")
-        }
+        startWrite(gatt, characteristic, payload, null)
     }
 
     @SuppressLint("MissingPermission", "ObsoleteSdkInt", "DEPRECATION")
@@ -277,12 +297,14 @@ class AlbersBleManager(
             return
         }
 
-        writeCharacteristic(gatt, characteristic, payload)
+        pendingWrites.add(PendingWrite(shortUuid = shortUuid, payload = payload))
+        processNextOperation()
     }
 
     fun release() {
         userRequestedDisconnect = true
         stopScan()
+        cancelPendingReconnect()
         disconnect()
     }
 
@@ -330,9 +352,12 @@ class AlbersBleManager(
 
     private fun closeGatt() {
         pendingReadShortUuids.clear()
+        pendingWrites.clear()
         readRetryCounts.clear()
         readInProgress = false
+        writeInProgress = false
         currentReadShortUuid = null
+        currentWriteShortUuid = null
         bluetoothGatt?.refreshDeviceCache()
         bluetoothGatt?.close()
         bluetoothGatt = null
@@ -407,12 +432,16 @@ class AlbersBleManager(
                 } else if (!userRequestedDisconnect && currentDevice != null && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
                     reconnectAttempts += 1
                     callback.onConnectionStateChanged(BleConnectionState.Reconnecting)
-                    mainHandler.postDelayed({
-                        val device = currentDevice ?: return@postDelayed
+                    val retryDelayMs = reconnectDelayForAttempt(reconnectAttempts)
+                    val reconnectRunnable = Runnable {
+                        pendingReconnectRunnable = null
+                        val device = currentDevice ?: return@Runnable
                         Log.d(TAG, "Reconnect attempt $reconnectAttempts to ${device.address}")
                         callback.onConnectionStateChanged(BleConnectionState.Connecting)
                         connectWhenBonded(device)
-                    }, RECONNECT_DELAY_MS)
+                    }
+                    pendingReconnectRunnable = reconnectRunnable
+                    mainHandler.postDelayed(reconnectRunnable, retryDelayMs)
                 } else {
                     lastConnectionFailureMessage?.let { message ->
                         callback.onError(message)
@@ -426,6 +455,7 @@ class AlbersBleManager(
     }
 
     private fun handleGattError(message: String, cause: Throwable?) {
+        val readFailed = readInProgress && message.contains("Characteristic read failed", ignoreCase = true)
         if (readInProgress && message.contains("Characteristic read failed", ignoreCase = true)) {
             val failedShortUuid = currentReadShortUuid
             readInProgress = false
@@ -447,9 +477,10 @@ class AlbersBleManager(
             }
         }
 
-        if (message.contains("status 34", ignoreCase = true)) {
+        val connectionStatus = message.gattConnectionStatusOrNull()
+        if (connectionStatus in TRANSIENT_CONNECTION_STATUS_CODES) {
             lastConnectionFailureMessage =
-                "ALBERS link setup failed with GATT status 34. Keeping the app in reconnect mode; if this repeats, power-cycle ALBERS, forget/unpair Albers_BLE_BAL3, pair again with PIN 333333, then retry."
+                "ALBERS link setup failed with GATT status $connectionStatus. Keeping the app in reconnect mode; if this repeats, turn ALBERS off and on, forget/unpair Albers_BLE_BAL3, pair again with PIN 333333, then retry."
             Log.w(TAG, lastConnectionFailureMessage.orEmpty())
             return
         }
@@ -466,6 +497,9 @@ class AlbersBleManager(
         }
 
         callback.onError(message, cause)
+        if (readFailed) {
+            processNextOperation()
+        }
     }
 
     private fun handleServicesDiscovered(gatt: BluetoothGatt, serviceUuids: List<UUID>) {
@@ -473,7 +507,6 @@ class AlbersBleManager(
         bluetoothGatt = gatt
         logAlbersCharacteristics(gatt)
         callback.onServicesDiscovered(serviceUuids)
-        queueInitialReads()
     }
 
     private fun handleCharacteristicRead(characteristicUuid: UUID, value: ByteArray) {
@@ -481,21 +514,28 @@ class AlbersBleManager(
         currentReadShortUuid = null
         protectedReadReconnectAttempts = 0
         callback.onCharacteristicRead(characteristicUuid, value)
-        readNextQueuedCharacteristic()
+        processNextOperation()
     }
 
-    private fun queueInitialReads() {
+    private fun handleCharacteristicWrite(characteristicUuid: UUID, success: Boolean, status: Int) {
+        writeInProgress = false
+        currentWriteShortUuid = null
+        callback.onCharacteristicWrite(characteristicUuid, success, status)
+        processNextOperation()
+    }
+
+    fun queueInitialReads() {
         pendingReadShortUuids.clear()
         readRetryCounts.clear()
         pendingReadShortUuids.addAll(AlbersGattProfile.readableShortUuids)
         readInProgress = false
         currentReadShortUuid = null
-        mainHandler.postDelayed(::readNextQueuedCharacteristic, POST_DISCOVERY_READ_DELAY_MS)
+        mainHandler.postDelayed(::processNextOperation, POST_DISCOVERY_READ_DELAY_MS)
     }
 
     @SuppressLint("MissingPermission")
     private fun readNextQueuedCharacteristic() {
-        if (readInProgress) return
+        if (readInProgress || writeInProgress) return
         val gatt = bluetoothGatt ?: return
 
         while (pendingReadShortUuids.isNotEmpty()) {
@@ -506,13 +546,13 @@ class AlbersBleManager(
                 continue
             }
 
-            readCharacteristic(gatt, characteristic)
+            startRead(gatt, characteristic)
             return
         }
     }
 
     @SuppressLint("MissingPermission")
-    private fun readCharacteristic(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
+    private fun startRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
         val shortUuid = characteristic.uuid.shortUuidOrNull()
         currentReadShortUuid = shortUuid
         Log.d(
@@ -525,7 +565,7 @@ class AlbersBleManager(
             readInProgress = false
             currentReadShortUuid = null
             callback.onError("Unable to start characteristic read: ${characteristic.uuid}")
-            readNextQueuedCharacteristic()
+            processNextOperation()
         }
     }
 
@@ -544,7 +584,7 @@ class AlbersBleManager(
         )
         mainHandler.postDelayed({
             pendingReadShortUuids.addFirst(shortUuid)
-            readNextQueuedCharacteristic()
+            processNextOperation()
         }, READ_RETRY_DELAY_MS)
     }
 
@@ -561,12 +601,24 @@ class AlbersBleManager(
                 "Reconnecting GATT $protectedReadReconnectAttempts/$MAX_PROTECTED_READ_RECONNECT_ATTEMPTS"
         )
         callback.onConnectionStateChanged(BleConnectionState.Reconnecting)
+        cancelPendingReconnect()
         closeGatt()
         mainHandler.postDelayed({
             val device = currentDevice ?: return@postDelayed
             callback.onConnectionStateChanged(BleConnectionState.Connecting)
             connectWhenBonded(device)
         }, PROTECTED_READ_RECONNECT_DELAY_MS)
+    }
+
+    private fun cancelPendingReconnect() {
+        pendingReconnectRunnable?.let { runnable ->
+            mainHandler.removeCallbacks(runnable)
+        }
+        pendingReconnectRunnable = null
+    }
+
+    private fun reconnectDelayForAttempt(attempt: Int): Long {
+        return RECONNECT_DELAY_MS + ((attempt - 1).coerceAtLeast(0) * RECONNECT_BACKOFF_STEP_MS)
     }
 
     private fun BluetoothGatt.refreshDeviceCache() {
@@ -580,11 +632,14 @@ class AlbersBleManager(
     }
 
     @SuppressLint("MissingPermission", "ObsoleteSdkInt", "DEPRECATION")
-    private fun writeCharacteristic(
+    private fun startWrite(
         gatt: BluetoothGatt,
         characteristic: BluetoothGattCharacteristic,
-        payload: ByteArray
+        payload: ByteArray,
+        shortUuid: Int?
     ) {
+        currentWriteShortUuid = shortUuid ?: characteristic.uuid.shortUuidOrNull()
+        writeInProgress = true
         Log.d(TAG, "Writing ${payload.size} bytes to characteristic: ${characteristic.uuid}")
         val status = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             gatt.writeCharacteristic(
@@ -599,8 +654,30 @@ class AlbersBleManager(
         }
 
         if (status != BluetoothGatt.GATT_SUCCESS) {
+            writeInProgress = false
+            currentWriteShortUuid = null
             callback.onError("Unable to start characteristic write: ${characteristic.uuid}")
+            processNextOperation()
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun processNextOperation() {
+        if (readInProgress || writeInProgress) return
+        val gatt = bluetoothGatt ?: return
+
+        while (pendingWrites.isNotEmpty()) {
+            val pendingWrite = pendingWrites.removeFirst()
+            val characteristic = gatt.findCharacteristic(pendingWrite.shortUuid)
+            if (characteristic == null) {
+                callback.onError("Characteristic not found: 0x${pendingWrite.shortUuid.toHexShort()}")
+                continue
+            }
+            startWrite(gatt, characteristic, pendingWrite.payload, pendingWrite.shortUuid)
+            return
+        }
+
+        readNextQueuedCharacteristic()
     }
 
     private fun BluetoothGatt.findCharacteristic(shortUuid: Int): BluetoothGattCharacteristic? {
@@ -646,7 +723,7 @@ class AlbersBleManager(
         fun onConnectionStateChanged(state: BleConnectionState)
         fun onServicesDiscovered(serviceUuids: List<UUID>)
         fun onCharacteristicRead(characteristicUuid: UUID, value: ByteArray)
-        fun onCharacteristicWrite(characteristicUuid: UUID, success: Boolean)
+        fun onCharacteristicWrite(characteristicUuid: UUID, success: Boolean, status: Int)
         fun onError(message: String, cause: Throwable? = null)
     }
 
@@ -663,13 +740,21 @@ class AlbersBleManager(
         private const val SCAN_TIMEOUT_MS = 15_000L
         private const val MAX_RECONNECT_ATTEMPTS = 5
         private const val RECONNECT_DELAY_MS = 3_500L
+        private const val RECONNECT_BACKOFF_STEP_MS = 1_500L
+        private const val GATT_OPEN_AFTER_CLOSE_DELAY_MS = 600L
         private const val POST_DISCOVERY_READ_DELAY_MS = 2_500L
         private const val READ_RETRY_DELAY_MS = 2_000L
         private const val MAX_READ_RETRY_ATTEMPTS = 2
         private const val MAX_PROTECTED_READ_RECONNECT_ATTEMPTS = 2
         private const val PROTECTED_READ_RECONNECT_DELAY_MS = 3_000L
+        private val TRANSIENT_CONNECTION_STATUS_CODES = setOf(8, 19, 22, 34, 62, 133, 147)
     }
 }
+
+private data class PendingWrite(
+    val shortUuid: Int,
+    val payload: ByteArray
+)
 
 private fun UUID.matchesShortUuid(shortUuid: Int): Boolean =
     with(AlbersGattProfile) { this@matchesShortUuid.matchesShortUuid(shortUuid) }
@@ -678,6 +763,11 @@ private fun UUID.shortUuidOrNull(): Int? =
     with(AlbersGattProfile) { this@shortUuidOrNull.shortUuidOrNull() }
 
 private fun Int.toHexShort(): String = toString(radix = 16).padStart(4, '0').uppercase()
+
+private fun String.gattConnectionStatusOrNull(): Int? {
+    val match = Regex("""GATT connection failed with status (\d+)""", RegexOption.IGNORE_CASE).find(this)
+    return match?.groupValues?.getOrNull(1)?.toIntOrNull()
+}
 
 sealed class BleConnectionState {
     data object Disconnected : BleConnectionState()

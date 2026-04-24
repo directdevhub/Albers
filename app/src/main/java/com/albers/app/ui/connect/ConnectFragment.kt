@@ -102,8 +102,6 @@ class ConnectFragment : Fragment() {
         } else {
             permissions += Manifest.permission.ACCESS_FINE_LOCATION
         }
-
-        permissions += Manifest.permission.ACCESS_FINE_LOCATION
         return permissions.toTypedArray()
     }
 
@@ -167,7 +165,11 @@ class ConnectFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    val locationHint = if (state.phase == BleSessionPhase.Scanning && !isLocationEnabled()) {
+                    val locationHint = if (
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.S &&
+                        state.phase == BleSessionPhase.Scanning &&
+                        !isLocationEnabled()
+                    ) {
                         " If no device appears, turn phone Location/GPS on and scan again."
                     } else {
                         ""

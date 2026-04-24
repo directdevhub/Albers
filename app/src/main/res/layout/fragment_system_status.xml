@@ -12,8 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp"
-        android:gravity="center|top">
+        android:gravity="center|top"
+        android:minHeight="@dimen/screen_min_height"
+        android:padding="@dimen/screen_padding">
 
         <include
             android:id="@+id/systemStatusHeader"
@@ -21,8 +22,8 @@
 
         <ImageView
             android:id="@+id/systemNominalIcon"
-            android:layout_width="124dp"
-            android:layout_height="124dp"
+            android:layout_width="@dimen/icon_status"
+            android:layout_height="@dimen/icon_status"
             android:alpha="1"
             android:src="@drawable/ic_system_icon"
             android:scaleType="centerInside"
@@ -37,11 +38,11 @@
             android:id="@+id/systemSummaryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/space_md"
             android:gravity="center"
             android:text="@string/all_monitored_values_are_nominal"
             android:textColor="@color/status_on"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_heading"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/systemNominalIcon"
             app:layout_constraintEnd_toEndOf="parent"
@@ -51,9 +52,9 @@
             android:id="@+id/pumpStatusGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/space_lg"
             android:orientation="horizontal"
-            android:paddingBottom="42dp"
+            android:paddingBottom="@dimen/space_status_block"
             app:layout_constraintTop_toBottomOf="@+id/systemSummaryText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -61,27 +62,27 @@
             <LinearLayout
                 android:id="@+id/pumpOneCard"
                 android:layout_width="0dp"
-                android:layout_height="180dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/content_padding">
 
                 <TextView
                     android:id="@+id/pumpOneTitleText"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="@dimen/control_height"
                     android:enabled="false"
                     android:gravity="center"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_heading"
                     android:textStyle="bold"
                     android:textColor="@color/white"
                     android:text="@string/pump_1" />
 
                 <ImageView
                     android:id="@+id/pumpOneIcon"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
+                    android:layout_width="@dimen/icon_setting"
+                    android:layout_height="@dimen/icon_setting"
                     android:contentDescription="Pump 1"
                     android:src="@drawable/ic_pump" />
 
@@ -91,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Ready"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_heading"
                     android:textColor="@color/status_on" />
 
             </LinearLayout>
@@ -99,28 +100,29 @@
             <LinearLayout
                 android:id="@+id/pumpTwoCard"
                 android:layout_width="0dp"
-                android:layout_height="180dp"
-                android:layout_marginStart="12dp"
+                android:layout_height="wrap_content
+"
+                android:layout_marginStart="@dimen/space_md"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/content_padding">
 
                 <TextView
                     android:id="@+id/pumpTwoTitleText"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="@dimen/control_height"
                     android:enabled="false"
                     android:gravity="center"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_heading"
                     android:textStyle="bold"
                     android:textColor="@color/white"
                     android:text="@string/pump_2" />
 
                 <ImageView
                     android:id="@+id/pumpTwoIcon"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
+                    android:layout_width="@dimen/icon_setting"
+                    android:layout_height="@dimen/icon_setting"
                     android:contentDescription="Pump 2"
                     android:src="@drawable/ic_pump" />
 
@@ -130,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Ready"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_heading"
                     android:textColor="@color/status_on" />
 
             </LinearLayout>
@@ -139,8 +141,8 @@
 
         <ImageView
             android:id="@+id/helpButton"
-            android:layout_width="84dp"
-            android:layout_height="84dp"
+            android:layout_width="@dimen/icon_action"
+            android:layout_height="@dimen/icon_action"
             android:alpha="1"
             android:src="@drawable/ic_help"
             android:scaleType="centerInside"
@@ -153,8 +155,8 @@
 
         <ImageView
             android:id="@+id/backButton"
-            android:layout_width="84dp"
-            android:layout_height="84dp"
+            android:layout_width="@dimen/icon_action"
+            android:layout_height="@dimen/icon_action"
             android:alpha="1"
             android:src="@drawable/ic_back"
             android:scaleType="centerInside"
@@ -167,11 +169,11 @@
         <TextView
             android:id="@+id/batteryStatusValueText"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="24dp"
+            android:layout_height="@dimen/control_height"
+            android:layout_marginTop="@dimen/space_section"
             android:enabled="false"
             android:gravity="center"
-            android:textSize="22sp"
+            android:textSize="@dimen/text_title_sm"
             android:textStyle="bold"
             android:text="-"
             android:textColor="@color/white"
@@ -181,15 +183,15 @@
 
         <ImageView
             android:id="@+id/settingsNavButton"
-            android:layout_width="84dp"
-            android:layout_height="84dp"
+            android:layout_width="@dimen/icon_action"
+            android:layout_height="@dimen/icon_action"
             android:alpha="1"
             android:src="@drawable/ic_setting"
             android:scaleType="centerInside"
             android:clickable="true"
             android:enabled="true"
             android:focusable="true"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/space_md"
             app:layout_constraintTop_toBottomOf="@+id/batteryStatusValueText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -198,11 +200,12 @@
             android:id="@+id/pressureStatusText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/space_lg"
             android:background="@drawable/bg_warning_box"
-            android:padding="16dp"
+            android:padding="@dimen/content_padding"
             android:text="Pressure and current warnings will appear here."
             android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_body"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/helpButton"
             app:layout_constraintEnd_toEndOf="parent"

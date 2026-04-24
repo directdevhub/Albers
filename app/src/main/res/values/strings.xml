@@ -7,6 +7,10 @@
     <string name="connect">Connect</string>
     <string name="controls_unlock_after_connection">Controls unlock after connection.</string>
     <string name="pump_now">PUMP NOW</string>
+    <string name="pumping">PUMPING</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
+    <string name="stop">STOP</string>
     <string name="all_monitored_values_are_nominal">All monitored values are nominal</string>
     <string name="pump_1">Pump 1</string>
     <string name="pump_2">Pump 2</string>
@@ -107,7 +111,7 @@
         ALBERS does not collect personal data. The app uses Bluetooth to connect to a hardware device and display system status. No user data is stored or shared externally.
     </string>
     <string name="rinse_sanitize_cycle">Rinse/Sanitize Cycle</string>
-    <string name="clear_notification">Clear Notification</string>
+    <string name="clear_notification">Clear</string>
     <string name="no_notification_history_yet">No notification history yet</string>
     <string name="notification_details">Notification details</string>
 </resources>

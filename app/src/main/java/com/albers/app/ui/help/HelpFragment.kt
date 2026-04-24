@@ -37,11 +37,11 @@ class HelpFragment : Fragment() {
                 viewModel.appState.collect { state ->
                     binding.helpIntroText.text = state.faultSummary.primaryMessage
                     binding.helpConnectionCard.text =
-                        "Connection: turn on Albers_BLE_BAL3, pair with PIN 333333, then tap Find ALBERS Device. If disconnected, return to Start and retry."
+                        "Connection: make sure the ALBERS battery is ON, BLE is enabled on the phone, ALBERS is selected, and pairing/authentication with PIN 333333 completes if Android asks. If protected reads fail, forget the device in Android Bluetooth settings, pair again, then retry in the app."
                     binding.helpBatteryCard.text =
-                        "Battery: low battery appears at 10% or less. Critical battery appears at 5% or less. Battery failure requires emergency battery guidance."
+                        "Battery: low battery appears at 10% or less. Critical battery appears at 5% or less. Emergency battery means external power guidance should be followed, and battery failure means the battery path should be inspected before continued use."
                     binding.helpPumpCard.text =
-                        "Pump: one failed pump allows rinse if another pump is operable. Both failed pumps disable automatic pumping and rinse/sanitize."
+                        "Pump: PUMP NOW uses the selected automatic interval command immediately. One failed pump can still allow rinse if the other pump is operable. Both failed pumps disable rinse and automatic pump actions."
                 }
             }
         }

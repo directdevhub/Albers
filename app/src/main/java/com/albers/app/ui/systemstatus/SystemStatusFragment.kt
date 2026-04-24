@@ -12,7 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.albers.app.MainActivity
 import com.albers.app.R
 import com.albers.app.databinding.FragmentSystemStatusBinding
-import com.albers.app.viewmodel.SystemStatusIcon
+import com.albers.app.ui.common.toDrawableRes
 import com.albers.app.viewmodel.SystemStatusViewModel
 import kotlinx.coroutines.launch
 
@@ -35,6 +35,7 @@ class SystemStatusFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.backButton.setOnClickListener { parentFragmentManager.popBackStack() }
         binding.helpButton.setOnClickListener { (requireActivity() as MainActivity).showHelp() }
+        binding.systemNominalIcon.setOnClickListener { (requireActivity() as MainActivity).showSystemStatus() }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -43,7 +44,7 @@ class SystemStatusFragment : Fragment() {
                     binding.systemSummaryText.setTextColor(
                         resources.getColor(if (state.isNominal) R.color.status_on else R.color.status_warning, null)
                     )
-                    binding.systemNominalIcon.setImageResource(state.statusIcon.toDrawableRes())
+                    binding.systemNominalIcon.setImageResource(state.statusBadge.toDrawableRes())
                     binding.pumpOneStateText.text = state.pump1
                     binding.pumpTwoStateText.text = state.pump2
                     binding.pumpOneIcon.setImageResource(
@@ -75,14 +76,5 @@ class SystemStatusFragment : Fragment() {
 
     companion object {
         fun newInstance(): SystemStatusFragment = SystemStatusFragment()
-    }
-}
-
-private fun SystemStatusIcon.toDrawableRes(): Int {
-    return when (this) {
-        SystemStatusIcon.Nominal -> R.drawable.ic_system_icon
-        SystemStatusIcon.LowBattery -> R.drawable.ic_low_battery
-        SystemStatusIcon.EmergencyBattery -> R.drawable.ic_emgency_battery
-        SystemStatusIcon.PumpError -> R.drawable.ic_pump_error
     }
 }

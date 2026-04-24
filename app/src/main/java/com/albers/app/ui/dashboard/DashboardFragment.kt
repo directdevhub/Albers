@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -12,8 +13,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.albers.app.MainActivity
 import com.albers.app.R
 import com.albers.app.databinding.FragmentDashboardBinding
+import com.albers.app.ui.common.toDrawableRes
 import com.albers.app.utils.AlbersNotificationHelper
-import com.albers.app.viewmodel.DashboardIndicator
 import com.albers.app.viewmodel.DashboardViewModel
 import kotlinx.coroutines.launch
 
@@ -42,11 +43,18 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         observeDashboardState()
 
+        binding.deviceStateText.setOnClickListener {
+            Toast.makeText(requireContext(), viewModel.deviceStateClickMessage(), Toast.LENGTH_SHORT).show()
+            viewModel.onDeviceStateClicked()
+        }
+
         binding.pumpNowButton.setOnClickListener {
+            Toast.makeText(requireContext(), viewModel.pumpNowClickMessage(), Toast.LENGTH_SHORT).show()
             viewModel.onPumpNowClicked()
         }
 
         binding.stopButton.setOnClickListener {
+            Toast.makeText(requireContext(), viewModel.stopClickMessage(), Toast.LENGTH_SHORT).show()
             viewModel.onStopClicked()
         }
 
@@ -70,15 +78,25 @@ class DashboardFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     binding.timerText.text = state.countdownText
 
-                    binding.deviceStateText.isEnabled = state.deviceState == "ON"
-                    binding.deviceStateText.alpha = if (binding.deviceStateText.isEnabled) ENABLED_ALPHA else DISABLED_ALPHA
-                    binding.stopButton.isEnabled = state.showPumping
-                    binding.stopButton.alpha = if (binding.stopButton.isEnabled) ENABLED_ALPHA else DISABLED_ALPHA
+                    binding.deviceStateText.isEnabled = true
+                    binding.deviceStateText.alpha = if (state.isDeviceIlluminated) ENABLED_ALPHA else DISABLED_ALPHA
+                    binding.deviceStateLabelText.alpha = binding.deviceStateText.alpha
 
-                    binding.timerOverrideButton.visibility = if (state.showPumping) View.GONE else View.VISIBLE
+                    binding.stopButton.isEnabled = true
+                    binding.stopButton.alpha = if (state.isStopIlluminated) ENABLED_ALPHA else DISABLED_ALPHA
+                    binding.stopButtonLabelText.text = state.stopLabel
+                    binding.stopButtonLabelText.alpha = binding.stopButton.alpha
 
-                    binding.pumpNowButton.isEnabled = state.canPumpNow
-                    binding.pumpNowButton.text = if (state.showPumping) "PUMPING" else getString(R.string.pump_now)
+                    binding.timerOverrideButton.visibility =
+                        if (state.shouldShowTimerOverride) View.VISIBLE else View.GONE
+
+                    binding.pumpNowButton.isEnabled = true
+                    binding.pumpNowButton.text = state.pumpNowLabel
+                    binding.pumpNowButton.alpha = when {
+                        state.showPumping && state.pumpNowLabel.isBlank() -> DISABLED_ALPHA
+                        state.canPumpNow || state.showPumping -> ENABLED_ALPHA
+                        else -> DISABLED_ALPHA
+                    }
                     binding.pumpNowButton.setBackgroundResource(
                         when {
                             state.showPumping -> R.drawable.bg_button_red
@@ -88,7 +106,7 @@ class DashboardFragment : Fragment() {
                     )
 
                     binding.dashboardBottomNav.systemStatusNavButton.isEnabled = true
-                    binding.dashboardBottomNav.systemStatusNavButton.setImageResource(state.indicator.toSystemStatusIconRes())
+                    binding.dashboardBottomNav.systemStatusNavButton.setImageResource(state.statusBadge.toDrawableRes())
                     binding.dashboardBottomNav.settingsNavButton.isEnabled = true
                     binding.dashboardBottomNav.rinseNavButton.isEnabled = true
                     binding.dashboardBottomNav.helpNavButton.isEnabled = true
@@ -119,15 +137,5 @@ class DashboardFragment : Fragment() {
         private const val DISABLED_ALPHA = 0.2f
 
         fun newInstance(): DashboardFragment = DashboardFragment()
-    }
-}
-
-private fun DashboardIndicator.toSystemStatusIconRes(): Int {
-    return when (this) {
-        DashboardIndicator.Nominal -> R.drawable.ic_system_icon
-        DashboardIndicator.Hazard -> R.drawable.ic_pump_error
-        DashboardIndicator.LowBattery -> R.drawable.ic_low_battery
-        DashboardIndicator.CriticalBattery -> R.drawable.ic_low_battery
-        DashboardIndicator.EmergencyBattery -> R.drawable.ic_emgency_battery
     }
 }

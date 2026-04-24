@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/headerLogoImage"
-        android:layout_width="102dp"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/icon_primary_action"
+        android:layout_height="@dimen/icon_power"
         android:contentDescription="@string/app_name"
         android:src="@drawable/ic_text_albers" />
 

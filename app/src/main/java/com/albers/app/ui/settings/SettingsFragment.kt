@@ -13,6 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.albers.app.MainActivity
 import com.albers.app.R
 import com.albers.app.databinding.FragmentSettingsBinding
+import com.albers.app.ui.common.toDrawableRes
 import com.albers.app.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 
@@ -46,6 +47,7 @@ class SettingsFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     renderIntervalSelection(state.selectedIntervalMinutes)
+                    binding.systemNominalIcon.setImageResource(state.statusBadge.toDrawableRes())
                 }
             }
         }

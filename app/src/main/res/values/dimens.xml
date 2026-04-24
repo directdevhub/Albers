@@ -1,40 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="screen_padding">24dp</dimen>
-    <dimen name="screen_min_height">720dp</dimen>
+    <item name="screen_padding" type="dimen">@dimen/_12sdp</item>
+    <item name="screen_min_height" type="dimen">@dimen/_600sdp</item>
 
-    <dimen name="space_2xs">6dp</dimen>
-    <dimen name="line_spacing_body">4dp</dimen>
-    <dimen name="space_xs">8dp</dimen>
-    <dimen name="space_sm">10dp</dimen>
-    <dimen name="space_md">12dp</dimen>
-    <dimen name="space_card_gap">14dp</dimen>
-    <dimen name="space_lg">16dp</dimen>
-    <dimen name="space_xl">18dp</dimen>
-    <dimen name="space_2xl">20dp</dimen>
-    <dimen name="space_section">24dp</dimen>
-    <dimen name="space_3xl">28dp</dimen>
-    <dimen name="space_4xl">32dp</dimen>
-    <dimen name="space_power_gap">40dp</dimen>
-    <dimen name="space_control_gap">48dp</dimen>
-    <dimen name="space_large_title">80dp</dimen>
+    <item name="space_2xs" type="dimen">@dimen/_6sdp</item>
+    <item name="line_spacing_body" type="dimen">@dimen/_4sdp</item>
+    <item name="space_xs" type="dimen">@dimen/_8sdp</item>
+    <item name="space_sm" type="dimen">@dimen/_10sdp</item>
+    <item name="space_md" type="dimen">@dimen/_12sdp</item>
+    <item name="space_card_gap" type="dimen">@dimen/_14sdp</item>
+    <item name="space_lg" type="dimen">@dimen/_16sdp</item>
+    <item name="space_xl" type="dimen">@dimen/_18sdp</item>
+    <item name="space_2xl" type="dimen">@dimen/_20sdp</item>
+    <item name="space_section" type="dimen">@dimen/_24sdp</item>
+    <item name="space_3xl" type="dimen">@dimen/_28sdp</item>
+    <item name="space_4xl" type="dimen">@dimen/_32sdp</item>
+    <item name="space_power_gap" type="dimen">@dimen/_40sdp</item>
+    <item name="space_status_block" type="dimen">@dimen/_42sdp</item>
+    <item name="space_control_gap" type="dimen">@dimen/_48sdp</item>
+    <item name="space_large_title" type="dimen">@dimen/_80sdp</item>
 
-    <dimen name="content_padding">16dp</dimen>
-    <dimen name="card_padding">18dp</dimen>
-    <dimen name="drawable_text_gap">12dp</dimen>
+    <item name="content_padding" type="dimen">@dimen/_16sdp</item>
+    <item name="card_padding" type="dimen">@dimen/_18sdp</item>
+    <item name="drawable_text_gap" type="dimen">@dimen/_12sdp</item>
 
-    <dimen name="control_height_small">48dp</dimen>
-    <dimen name="control_height">52dp</dimen>
-    <dimen name="control_height_large">56dp</dimen>
-    <dimen name="control_height_xlarge">64dp</dimen>
+    <item name="control_height_small" type="dimen">@dimen/_48sdp</item>
+    <item name="control_height" type="dimen">@dimen/_52sdp</item>
+    <item name="control_height_large" type="dimen">@dimen/_56sdp</item>
+    <item name="control_height_xlarge" type="dimen">@dimen/_64sdp</item>
+    <item name="control_height_nav" type="dimen">@dimen/_88sdp</item>
+    <item name="card_height_status" type="dimen">@dimen/_180sdp</item>
 
-    <dimen name="icon_setting">64dp</dimen>
-    <dimen name="icon_interval">72dp</dimen>
-    <dimen name="icon_power">80dp</dimen>
-    <dimen name="icon_action">84dp</dimen>
-    <dimen name="icon_primary_action">102dp</dimen>
-    <dimen name="icon_status">124dp</dimen>
-    <dimen name="splash_logo_size">160dp</dimen>
+    <item name="icon_setting" type="dimen">@dimen/_64sdp</item>
+    <item name="icon_interval" type="dimen">@dimen/_72sdp</item>
+    <item name="icon_power" type="dimen">@dimen/_80sdp</item>
+    <item name="icon_action" type="dimen">@dimen/_84sdp</item>
+    <item name="icon_primary_action" type="dimen">@dimen/_102sdp</item>
+    <item name="icon_status" type="dimen">@dimen/_102sdp</item>
+    <item name="icon_notification" type="dimen">@dimen/_48sdp</item>
+    <item name="splash_logo_size" type="dimen">@dimen/_160sdp</item>
 
-    <dimen name="notification_bottom_padding">108dp</dimen>
+    <item name="notification_bottom_padding" type="dimen">@dimen/_108sdp</item>
+
+    <item name="text_display_xl" type="dimen">@dimen/_48ssp</item>
+    <item name="text_display_lg" type="dimen">@dimen/_30ssp</item>
+    <item name="text_title_xl" type="dimen">@dimen/_28ssp</item>
+    <item name="text_title_lg" type="dimen">@dimen/_26ssp</item>
+    <item name="text_title_md" type="dimen">@dimen/_24ssp</item>
+    <item name="text_title_sm" type="dimen">@dimen/_22ssp</item>
+    <item name="text_heading" type="dimen">@dimen/_18ssp</item>
+    <item name="text_heading_md" type="dimen">@dimen/_17ssp</item>
+    <item name="text_body" type="dimen">@dimen/_16ssp</item>
+    <item name="text_body_md" type="dimen">@dimen/_15ssp</item>
+    <item name="text_body_sm" type="dimen">@dimen/_14ssp</item>
+    <item name="text_caption" type="dimen">@dimen/_12ssp</item>
 </resources>

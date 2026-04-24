@@ -13,7 +13,7 @@ class GattCallback(
     private val onConnectionStateChanged: (BluetoothGatt, BleConnectionState) -> Unit,
     private val onServicesDiscovered: (BluetoothGatt, List<UUID>) -> Unit,
     private val onCharacteristicRead: (UUID, ByteArray) -> Unit,
-    private val onCharacteristicWrite: (UUID, Boolean) -> Unit,
+    private val onCharacteristicWrite: (UUID, Boolean, Int) -> Unit,
     private val onError: (String, Throwable?) -> Unit
 ) : BluetoothGattCallback() {
 
@@ -87,7 +87,7 @@ class GattCallback(
     ) {
         val success = status == BluetoothGatt.GATT_SUCCESS
         Log.d(TAG, "Characteristic write: uuid=${characteristic.uuid} success=$success status=$status")
-        onCharacteristicWrite(characteristic.uuid, success)
+        onCharacteristicWrite(characteristic.uuid, success, status)
     }
 
     private fun handleCharacteristicRead(uuid: UUID, value: ByteArray, status: Int) {

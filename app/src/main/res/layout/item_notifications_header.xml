@@ -3,9 +3,9 @@
     android:id="@+id/notificationDate"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginTop="@dimen/space_lg"
+    android:layout_marginBottom="@dimen/space_xs"
     android:gravity="center_vertical"
     android:textColor="@color/white"
-    android:textSize="18sp"
+    android:textSize="@dimen/text_heading"
     android:textStyle="bold" />

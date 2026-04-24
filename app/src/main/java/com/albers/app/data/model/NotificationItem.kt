@@ -16,5 +16,6 @@ enum class NotificationType {
     PumpError,
     BatteryFailure,
     ConnectionLost,
+    OfflineDiagnostic,
     UnknownFault
 }

@@ -43,7 +43,7 @@
             android:text="@string/automatic_pump_cycle"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="22sp"
+            android:textSize="@dimen/text_title_sm"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/settingImg" />
@@ -71,7 +71,7 @@
                     android:text="[Minutes]"
                     android:textAlignment="center"
                     android:textColor="@color/text_primary"
-                    android:textSize="18sp" />
+                    android:textSize="@dimen/text_heading" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/pumpIntervalOptions"
@@ -88,7 +88,7 @@
                         android:gravity="center"
                         android:text="@string/_60"
                         android:textColor="@color/text_primary"
-                        android:textSize="24sp"
+                        android:textSize="@dimen/text_title_md"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -103,7 +103,7 @@
                         android:gravity="center"
                         android:text="@string/_90"
                         android:textColor="@color/text_primary"
-                        android:textSize="24sp"
+                        android:textSize="@dimen/text_title_md"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/interval120Button"
@@ -119,7 +119,7 @@
                         android:gravity="center"
                         android:text="@string/_120"
                         android:textColor="@color/text_primary"
-                        android:textSize="24sp"
+                        android:textSize="@dimen/text_title_md"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -196,7 +196,7 @@
                 android:text="@string/notifications"
                 android:textAllCaps="true"
                 android:textColor="@color/text_primary"
-                android:textSize="24sp"
+                android:textSize="@dimen/text_title_md"
                 android:textStyle="normal" />
 
             <TextView
@@ -211,7 +211,7 @@
                 android:text="@string/voice_control"
                 android:textAllCaps="true"
                 android:textColor="@color/text_primary"
-                android:textSize="24sp"
+                android:textSize="@dimen/text_title_md"
                 android:textStyle="normal" />
 
             <TextView
@@ -227,7 +227,7 @@
                 android:text="@string/privacy_and_security"
                 android:textAllCaps="true"
                 android:textColor="@color/text_primary"
-                android:textSize="24sp"
+                android:textSize="@dimen/text_title_md"
                 android:textStyle="normal" />
         </LinearLayout>
 

@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.albers.app.data.model.BatteryType
 import com.albers.app.data.model.FaultSeverity
-import com.albers.app.data.model.FaultState
+import com.albers.app.data.model.PumpOperability
+import com.albers.app.data.model.PumpReading
 import com.albers.app.data.repository.AlbersRepository
+import com.albers.app.ui.common.SystemStatusBadge
+import com.albers.app.ui.common.resolveSystemStatusBadge
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -15,28 +18,19 @@ class SystemStatusViewModel : ViewModel() {
         .map { appState ->
             val status = appState.deviceStatus
             val faults = appState.faultSummary.states
-            val pump1Failed = status.pump1CurrentAmps?.let { it < PUMP_FAILURE_CURRENT_AMPS } == true ||
-                FaultState.BothPumpsFailed in faults
-            val pump2Failed = status.pump2CurrentAmps?.let { it < PUMP_FAILURE_CURRENT_AMPS } == true ||
-                FaultState.BothPumpsFailed in faults
-            val batteryPercent = status.batteryPercent
+            val batteryPercent = status.batteryStatus.percent
             SystemStatusUiState(
                 summary = appState.faultSummary.primaryMessage,
                 isNominal = appState.faultSummary.highestSeverity == FaultSeverity.Nominal,
-                pump1 = if (pump1Failed) {
-                    "Check current: ${status.pump1CurrentAmps?.formatAmps() ?: "--"}"
-                } else {
-                    "Ready (${status.pump1CurrentAmps?.formatAmps() ?: "--"})"
-                },
-                pump2 = if (pump2Failed) {
-                    "Check current: ${status.pump2CurrentAmps?.formatAmps() ?: "--"}"
-                } else {
-                    "Ready (${status.pump2CurrentAmps?.formatAmps() ?: "--"})"
-                },
-                pump1Failed = pump1Failed,
-                pump2Failed = pump2Failed,
+                pump1 = status.pumpStatus.pump1.toShortStatus(),
+                pump2 = status.pumpStatus.pump2.toShortStatus(),
+                pump1Failed = status.pumpStatus.pump1.operability == PumpOperability.Inoperable,
+                pump2Failed = status.pumpStatus.pump2.operability == PumpOperability.Inoperable,
                 batteryPercent = batteryPercent,
-                battery = "${status.batteryPercent?.toString() ?: "--"}% charge",
+                battery = when (batteryPercent) {
+                    null -> "Battery unavailable"
+                    else -> "$batteryPercent% battery"
+                },
                 batteryMode = when (status.batteryType) {
                     BatteryType.Main -> "Main battery"
                     BatteryType.Emergency -> "Emergency battery active"
@@ -44,22 +38,26 @@ class SystemStatusViewModel : ViewModel() {
                     BatteryType.Unknown -> "Battery type unavailable"
                 },
                 pressure = status.pressureHpa?.let { "%.1f hPa".format(it) } ?: "Pressure unavailable",
-                message = appState.lastErrorMessage ?: appState.faultSummary.primaryMessage,
-                statusIcon = when {
-                    pump1Failed || pump2Failed || FaultState.BatteryFailure in faults -> SystemStatusIcon.PumpError
-                    status.batteryType == BatteryType.Emergency -> SystemStatusIcon.EmergencyBattery
-                    batteryPercent != null && batteryPercent <= LOW_BATTERY_PERCENT -> SystemStatusIcon.LowBattery
-                    else -> SystemStatusIcon.Nominal
-                },
+                message = appState.lastErrorMessage ?: status.deviceTimestamp?.toDisplayText() ?: "Waiting for ALBERS data",
+                statusBadge = resolveSystemStatusBadge(
+                    faults = faults,
+                    batteryType = status.batteryType,
+                    batteryPercent = batteryPercent
+                ),
                 isBatteryLow = batteryPercent != null && batteryPercent <= LOW_BATTERY_PERCENT
             )
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SystemStatusUiState())
 
-    private fun Float.formatAmps(): String = "%.2f A".format(this)
+    private fun PumpReading.toShortStatus(): String {
+        return when (operability) {
+            PumpOperability.Inoperable -> "ERROR"
+            PumpOperability.Operable -> "ACTIVE"
+            PumpOperability.Unknown -> "WAITING"
+        }
+    }
 
     private companion object {
-        private const val PUMP_FAILURE_CURRENT_AMPS = 0.4f
         private const val LOW_BATTERY_PERCENT = 10
     }
 }
@@ -72,17 +70,10 @@ data class SystemStatusUiState(
     val pump1Failed: Boolean = false,
     val pump2Failed: Boolean = false,
     val batteryPercent: Int? = null,
-    val battery: String = "--% charge",
+    val battery: String = "Battery unavailable",
     val batteryMode: String = "Battery type unavailable",
     val pressure: String = "Pressure unavailable",
     val message: String = "Waiting for ALBERS data",
-    val statusIcon: SystemStatusIcon = SystemStatusIcon.Nominal,
+    val statusBadge: SystemStatusBadge = SystemStatusBadge.Nominal,
     val isBatteryLow: Boolean = false
 )
-
-enum class SystemStatusIcon {
-    Nominal,
-    LowBattery,
-    EmergencyBattery,
-    PumpError
-}

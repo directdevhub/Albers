@@ -17,8 +17,8 @@
 
         <ImageView
             android:id="@+id/systemStatusNavButton"
-            android:layout_width="114dp"
-            android:layout_height="124dp"
+            android:layout_width="@dimen/_84sdp"
+            android:layout_height="@dimen/_84sdp"
             android:alpha="1"
             android:src="@drawable/ic_system_icon"
             android:scaleType="centerInside"
@@ -31,8 +31,8 @@
 
         <ImageView
             android:id="@+id/settingsNavButton"
-            android:layout_width="104dp"
-            android:layout_height="104dp"
+            android:layout_width="@dimen/_84sdp"
+            android:layout_height="@dimen/_84sdp"
             android:alpha="1"
             android:src="@drawable/ic_setting"
             android:scaleType="centerInside"
@@ -45,8 +45,8 @@
 
         <ImageView
             android:id="@+id/rinseNavButton"
-            android:layout_width="114dp"
-            android:layout_height="124dp"
+            android:layout_width="@dimen/_84sdp"
+            android:layout_height="@dimen/_84sdp"
             android:alpha="1"
             android:src="@drawable/ic_rinse_sanitize"
             android:scaleType="centerInside"
